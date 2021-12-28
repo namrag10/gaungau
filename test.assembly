@@ -1,0 +1,44 @@
+=== $test = 2 ===
+&LDA 2
+STO 0x00
+
+=== if($test < 3) ===
+&LDA 3          // To compare against
+SUB 0x00        // Subtracts the vale of $tst from 3
+BRC [SkipBRP]   // the result (3 - 2 = 1) is positive, so it is true
+BRP [Skip to after if block]
+
+=== inside if success block ===
+	=== $num = 5 ===
+	&LDA 5
+	STO 0x01
+
+	=== while($num > 0) ===
+	LDA 0x01
+	&LDA 0
+	BRC [skip after BRP]
+	BRP [Skip out of while]
+
+	=== inside while loop ===
+		=== $num = $num - 1;
+		LDA 0x01
+		&SUB 1
+		STO 0x01
+
+		=== NOP ==
+		// NO OPERATION
+
+		BRA [TOP OF WHILE BLOCK]
+
+
+
+
+
+
+> : less than 0
+< : Greater than 0
+if(2 > 3)
+
+2 < 3
+3 - 2 = 1 : 
+

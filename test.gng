@@ -1,4 +1,11 @@
-$test = 45;
+
+
+$test = 2;
 if($test < 3){
-    LDA &30;
+    $num = 5;
+
+    while($num > 0){
+        $num = $num - 1;
+        NOP;
+    }
 }

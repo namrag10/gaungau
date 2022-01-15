@@ -1,0 +1,25 @@
+
+=== Flags ===
+
+For flag instructions, flags 0 - 6 should be mapped to (10000000 -> 00000010) [(00000001 cannot be altered manually)]
+
+
+
+=== Blocks ===
+
+---
+$test = 2;
+---
+
+---
+if($test < 3){
+    $num = 5;
+
+    ---
+    while($num > 0){
+        $num = $num - 1;
+        NOP;
+    }
+    ---
+}
+---

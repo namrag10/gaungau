@@ -30,7 +30,7 @@ public class App {
 
 		mainStack codeBase = new mainStack(txtScript);
 
-		print(codeBase.toString());
+		// print(codeBase.toString());
 
 
 

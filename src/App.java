@@ -2,6 +2,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+import Processes.Lexical;
+import Processes.Syntax;
+
 public class App {
 	public static void main(String[] args) throws Exception {
 		if(args.length > 1){
@@ -20,19 +23,22 @@ public class App {
 			File myObj = new File(args[0] + ".gng");
 			Scanner myReader = new Scanner(myObj);
 			while (myReader.hasNextLine())
-				txtScript = txtScript + myReader.nextLine();
-				
+				txtScript = txtScript + myReader.nextLine() + "\n";
+
 			myReader.close();
 		} catch (FileNotFoundException e) {
 			print("Script was not found at path '" + args[0] + ".gng'!");
 			return;
 		}
 
-		mainStack codeBase = new mainStack(txtScript);
-
-		// print(codeBase.toString());
+		Lexical lex = new Lexical(txtScript);
 
 
+		print(lex.toString());
+
+		Syntax Syn = new Syntax(lex);
+
+		print(Syn);
 
 	}
 

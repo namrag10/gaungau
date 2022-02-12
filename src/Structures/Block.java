@@ -2,11 +2,10 @@ package Structures;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import GarbageControl.MemoryManager;
 
 public class Block {
 
-    public Queue<String> rawBlock = new LinkedList<String>();
+    public Queue<String> rawBlock = new LinkedList<String>(); 
     private Block child = null;
 
     public String condition = "";

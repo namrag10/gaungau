@@ -10,10 +10,10 @@ import Structures.Block;
 public class Lexical {
 	
 	private Queue<Block> lexStatements = new LinkedList<Block>();
+	private int amountOfBlocks = 0;
 
 	public Lexical(String rawSource){
 		rawSource = removeComents(rawSource);
-		System.out.println(rawSource);
 		//Lexical analysis
 		Queue<String>rawStatements = new LinkedList<String>(Arrays.asList(rawSource.split(";")));
 		String statement = rawStatements.poll();
@@ -58,6 +58,7 @@ public class Lexical {
 			lexStatements.add(parentBlock);
 			
 		}
+		amountOfBlocks = lexStatements.size();
 	}
 
 	public Queue<Block> getLex(){
@@ -94,5 +95,13 @@ public class Lexical {
 		statements = String.join("", lines);
 
 		return statements;
+	}
+
+	public int amountBlocks(){
+		return amountOfBlocks;
+	}
+
+	public Block getBlock(){
+		return (lexStatements.size() > 0) ? lexStatements.remove() : null;	
 	}
 }

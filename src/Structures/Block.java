@@ -1,12 +1,13 @@
 package Structures;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 
 public class Block {
 
-    public Queue<String> rawBlock = new LinkedList<String>(); 
-    private Block child = null;
+    private Queue<String> rawBlock = new LinkedList<String>(); 
+    private Stack<Block> children = new Stack<Block>();
 
     public String condition = "";
 
@@ -16,10 +17,17 @@ public class Block {
     }
 
     public void addChild(Block childToAdd){
-        this.child = childToAdd;
+        this.children.push(childToAdd);
     }
     public boolean hasChild(){
-        return (child != null);
+        return (children.size() > 0);
+    }
+    public Block getChild(){
+        return (hasChild()) ? children.pop() : null;
+    }
+
+    public Queue<String> getCode(){
+        return rawBlock;
     }
 
 }

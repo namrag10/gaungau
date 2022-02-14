@@ -34,11 +34,9 @@ public class App {
 		Lexical lex = new Lexical(txtScript);
 
 
-		print(lex.toString());
 
 		Syntax Syn = new Syntax(lex);
 
-		print(Syn);
 
 	}
 

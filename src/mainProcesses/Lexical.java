@@ -1,16 +1,14 @@
-package Processes;
+package mainProcesses;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
-
 import Structures.Block;
 
 public class Lexical {
 	
-	private Queue<Block> lexStatements = new LinkedList<Block>();
-	private int amountOfBlocks = 0;
+	private Queue<Block> blocks = new LinkedList<Block>();
 
 	public Lexical(String rawSource){
 		rawSource = removeComents(rawSource);
@@ -25,7 +23,7 @@ public class Lexical {
 				crntBlock.add(statement);
 				statement = rawStatements.poll();
 			}while(rawStatements.size() > 1 && statement.indexOf("{") < 0); // While statment doesnt contain a {
-			lexStatements.add(new Block(crntBlock, "true"));
+			blocks.add(new Block(crntBlock, "true"));
 			
 			Stack<String> Conditions = new Stack<String>();
 			Stack<Queue<String>> openBlocks = new Stack<Queue<String>>();
@@ -55,14 +53,13 @@ public class Lexical {
 			Block parentBlock = blockTree.pop();
 			while(blockTree.size() > 0)
 				parentBlock.addChild(blockTree.pop());
-			lexStatements.add(parentBlock);
+			blocks.add(parentBlock);
 			
 		}
-		amountOfBlocks = lexStatements.size();
 	}
 
 	public Queue<Block> getLex(){
-		return lexStatements;
+		return blocks;
 	}
 
 
@@ -97,11 +94,11 @@ public class Lexical {
 		return statements;
 	}
 
-	public int amountBlocks(){
-		return amountOfBlocks;
+	public boolean hasBlocks(){
+		return (blocks.size() > 0);
 	}
 
 	public Block getBlock(){
-		return (lexStatements.size() > 0) ? lexStatements.remove() : null;	
+		return blocks.poll();	
 	}
 }

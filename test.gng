@@ -1,6 +1,8 @@
-// yeet
-$yeet = 4;      // lala
+# yeet
+$yeet = 4;      # lala
 $test = 2;
+
+
 if($test < 3){
     $num = 5;
     $yeet = 78;

@@ -2,8 +2,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-import Processes.Lexical;
-import Processes.Syntax;
+import mainProcesses.Lexical;
+import mainProcesses.Syntax;
 
 public class App {
 	public static void main(String[] args) throws Exception {

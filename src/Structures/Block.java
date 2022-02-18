@@ -3,18 +3,23 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
+import Identify.tokenise;
+
 
 public class Block {
 
-    private Queue<String> rawBlock = new LinkedList<String>(); 
+    private Queue<String[]> blockCode = new LinkedList<String[]>(); 
     private Stack<Block> children = new Stack<Block>();
 
     public String condition = "";
 
     public Block(Queue<String> block, String condition){
-        rawBlock = new LinkedList<String>(block);
+        while(block.size() > 0)
+            blockCode.add(tokenise.parse(block.poll()));
         this.condition = condition;
     }
+
+
 
     public void addChild(Block childToAdd){
         this.children.push(childToAdd);
@@ -25,9 +30,14 @@ public class Block {
     public Block getChild(){
         return (hasChild()) ? children.pop() : null;
     }
-
-    public Queue<String> getCode(){
-        return rawBlock;
+    public Queue<String[]> getCode(){
+        return blockCode;
+    }
+    public String[] getLine(){
+        return blockCode.poll();
+    }
+    public boolean hasCode(){
+        return (blockCode.size() > 0);
     }
 
 }

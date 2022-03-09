@@ -11,7 +11,7 @@ public class Lexical {
 	private Queue<Block> blocks = new LinkedList<Block>();
 
 	public Lexical(String rawSource){
-		rawSource = removeComents(rawSource);
+		rawSource = removeComents(rawSource);								// Removes comments
 		//Lexical analysis
 		Queue<String>rawStatements = new LinkedList<String>(Arrays.asList(rawSource.split(";")));
 		String statement = rawStatements.poll();
@@ -82,7 +82,7 @@ public class Lexical {
 
 		for(int i = 0; i < lines.size(); i++){
 			String line = lines.get(i);
-			int index = line.indexOf("//");
+			int index = line.indexOf("#");
 			if(index == 0){
 				lines.remove(i);
 				i = -1;

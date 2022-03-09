@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Extract {
+public class PreProcessor {
     private Queue<String> Lines = new LinkedList<String>();
 
-	public Extract(String rawSource){
+	public PreProcessor(String rawSource){
         Queue<String>parsedStatements = new LinkedList<String>(Arrays.asList(rawSource.split(";")));
 		rawSource = removeComents(rawSource);
 		

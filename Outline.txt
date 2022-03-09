@@ -1,0 +1,26 @@
+Code (Written by dev)
+
+LEX:
+
+    > Pre processor
+        - Removes comments
+        - Parses instructions
+    
+    > Parsing
+        - Blocking
+        - Tokenisation
+
+
+VARIABLES:
+    > Address Registering
+
+
+SYNTAX:
+
+    > Tokens are checked agains syntax
+
+    > Errors produced
+
+CODE GENERATION:
+
+    > Converts code to machine code

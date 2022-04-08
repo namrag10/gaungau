@@ -1,39 +1,39 @@
-package mainProcesses;
+// package mainProcesses;
 
-import java.util.LinkedList;
-import java.util.Queue;
+// import java.util.LinkedList;
+// import java.util.Queue;
 
-import Structures.Block;
-import Structures.Instruction;
+// import Structures.Block;
+// import Structures.Instruction;
 
-public class Syntax {
+// public class Syntax {
 	
-	private Queue<Instruction> Lines = new LinkedList<Instruction>();
+// 	private Queue<Instruction> Lines = new LinkedList<Instruction>();
 
-	public Syntax(Lexical codeBase){
+// 	public Syntax(Tokenise codeBase){
 		
-		while(codeBase.hasBlocks()){
-			Block block = codeBase.getBlock();
-			parseBlock(block);
+// 		while(codeBase.hasBlocks()){
+// 			Block block = codeBase.getBlock();
+// 			parseBlock(block);
 			
 				
-			while(block.hasChild())
-				parseBlock(block.getChild());
+// 			while(block.hasChild())
+// 				parseBlock(block.getChild());
 
 
 			
-			// Lines.add(new Instruction(Line))
-		}
+// 			// Lines.add(new Instruction(Line))
+// 		}
 		
-		System.out.println();
+// 		System.out.println();
 
-	}
+// 	}
 
-	private void parseBlock(Block block){
-		if(block.condition != "true")
-			Lines.add(new Instruction(block.condition));
+// 	private void parseBlock(Block block){
+// 		if(block.condition != "true")
+// 			Lines.add(new Instruction(block.condition));
 			
-		while(block.hasCode())
-			Lines.add(new Instruction(block.getLine()));	
-	}
-}
+// 		while(block.hasCode())
+// 			Lines.add(new Instruction(block.getLine()));	
+// 	}
+// }

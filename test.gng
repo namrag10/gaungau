@@ -1,12 +1,11 @@
 # yeet
-$yeet = 4;      # lala
-$test = 2;
+yeet = 4      # lala
+test = 2
 
-
-if($test < 3){
-    $num = 5;
-    $yeet = 78;
-    while($num > 0){
-        $num = $num - 1;
-    }
+if(test < 3){
+    num = 5
+    yeet = 78
+    while(num > 0)
+        num = num - 1
 }
+haha = 7

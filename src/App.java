@@ -1,9 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Scanner;
 
-import mainProcesses.Lexical;
-import mainProcesses.Syntax;
+import mainProcesses.Tokenise;
 
 public class App {
 	public static void main(String[] args) throws Exception {
@@ -31,11 +30,11 @@ public class App {
 			return;
 		}
 
-		Lexical lex = new Lexical(txtScript);
+		Tokenise lex = new Tokenise(txtScript);
 
 
 
-		Syntax Syn = new Syntax(lex);
+		// Syntax Syn = new Syntax(lex); 
 
 
 	}

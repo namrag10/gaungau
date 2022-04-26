@@ -20,8 +20,11 @@ public class MemoryManager {
         return variables.get(name);
     }
 
-    public static ArrayList<Integer> getVariable(String varName){
-        return variables.get(varName);
+    public static Integer getAddress(String varName){
+        return variables.get(varName).get(0);
+    }
+    public static Integer getValue(String varName){
+        return variables.get(varName).get(1);
     }
 
     public static ArrayList<String> listVariables(){

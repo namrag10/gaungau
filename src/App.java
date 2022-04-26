@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import mainProcesses.Syntax;
 import mainProcesses.Tokenise;
 
 public class App {
@@ -34,7 +35,7 @@ public class App {
 
 
 
-		// Syntax Syn = new Syntax(lex); 
+		Syntax Syn = new Syntax(lex); 
 
 
 	}

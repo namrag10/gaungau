@@ -1,0 +1,41 @@
+--- BRANCHING ---
+IF ( CONDITION ) BLOCK
+ELSE BLOCK
+
+
+--- CONDITIONS ---
+==
+!=
+<
+>
+<=
+>=
+:=
+
+--- OPERATORS ---
++
+-
+
+
+
+--- ITERATION ---
+WHILE ( CONDITION ) BLOCK
+
+
+--- VARIABLES ---
+VAR_NAME := VALUE
+
+
+--- COMMENTS ---
+# COMMENT
+
+
+--- FUNCTIONS ---
+SUB NAME() BLOCK
+
+
+========================
+
+Keywords:
+- IF
+- WHILE

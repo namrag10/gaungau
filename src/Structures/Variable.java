@@ -5,8 +5,8 @@ import Syntax.Syntax;
 public class Variable extends struct implements Syntax {
 
     public String raw;
-    public String name = "";
-    public int value = -1;
+    public String lhs = "";
+    public String rhs = "";
     public int lineNumber;
 
     public Variable(Line rawStatement){
@@ -21,8 +21,8 @@ public class Variable extends struct implements Syntax {
 
     public boolean parse(){
         try{
-            value = Integer.parseInt(raw.substring(raw.indexOf(variableOperand) +2));
-            name = raw.substring(0, raw.indexOf(variableOperand));
+            rhs = raw.substring(raw.indexOf(variableOperand) +2);
+            lhs = raw.substring(0, raw.indexOf(variableOperand));
             return true;
         }catch(NumberFormatException e){
             return false;

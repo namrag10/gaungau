@@ -1,6 +1,6 @@
 # yeet
 yeet := 4      # lala
-test := 2
+test := num - 4
 
 if(test < 3){
     num := 5

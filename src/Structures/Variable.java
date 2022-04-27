@@ -1,33 +1,44 @@
 package Structures;
 
-import Syntax.Syntax;
+import ErrorHandle.Error;
+import GarbageControl.MemoryManager;
+import Structures.Meta.LineMeta;
 
-public class Variable extends struct implements Syntax {
+public class Variable extends Struc {
 
     public String raw;
     public String lhs = "";
     public String rhs = "";
     public int lineNumber;
 
-    public Variable(Line rawStatement){
-        raw = rawStatement.line;
+    public Variable(LineMeta rawStatement) {
+        raw = rawStatement.lineText;
         lineNumber = rawStatement.lineNumber;
     }
 
     @Override
-    public boolean execute(){
-        return parse();
-    }
-
-    public boolean parse(){
-        try{
-            rhs = raw.substring(raw.indexOf(variableOperand) +2);
+    public boolean parse() {
+        boolean valid = false;
+        try {
+            rhs = raw.substring(raw.indexOf(variableOperand) + 2);
             lhs = raw.substring(0, raw.indexOf(variableOperand));
-            return true;
-        }catch(NumberFormatException e){
-            return false;
+            for (String keyword : keywords) {
+                if (lhs.equals(keyword)) {
+                    Error.namingError("Cannot create a variable whose LHS is a keyword", lineNumber);
+                    return false;
+                }
+            }
+            valid = true;
+        } catch (NumberFormatException e) {
+            valid = false;
         }
+
+        if (valid) return create();
+        return false;
     }
 
-
+    public boolean create() {
+        return MemoryManager.newVariable(lhs);
+        
+    }
 }

@@ -3,14 +3,25 @@ package mainProcesses;
 import java.util.ArrayList;
 
 import Structures.*;
+import Structures.Functions.Function;
 
 public class Syntax {
 	
 	public Syntax(Tokenise codeBase){
-		ArrayList<struct> code = codeBase.getFullCode();
+		ArrayList<Struc> code = codeBase.getFullCode();
 		
-		for(int i = 0; i < code.size(); i++) // All the code at this point makes sense, but not necesserily correct
-			code.get(i).execute();
+		for (Struc structure : code) {
+
+			if(structure.getClass() == Variable.class){ // Found a variable
+				
+			}else if(structure.getClass() == Function.class){ // Found a function (look inside)
+				Function crnt = (Function) structure;
+				// for (Struc struc : ) {
+					
+				// }
+			}
+		}
+		
 		
 		
 			

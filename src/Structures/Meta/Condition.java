@@ -1,11 +1,14 @@
-package Structures;
+package Structures.Meta;
 
-public class Condition extends struct {
+import Structures.Struc;
 
-    public String raw;
+public class Condition extends Struc {
+
     public String condition = "";
 
     public Condition(String rawStatement){
         raw = rawStatement;
     }
+
+
 }

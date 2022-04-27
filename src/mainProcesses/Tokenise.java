@@ -1,52 +1,51 @@
 package mainProcesses;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
+import ErrorHandle.Error;
 import Structures.*;
+import Structures.Functions.Function;
+import Structures.Meta.LineMeta;
 import Syntax.Syntax;
 import subProcesses.Parser;
 
 public class Tokenise implements Syntax {
-	
-	final int variable = 1;
-	final int function = 2;
 
-	private String[] keywords = new String[]{"if", "while", "else"};
-	private String[] operands = new String[]{"==", "!=", "<", ">", "<=", ">="};
-	private String[] syntax = new String[]{"{", "}", "(", ")"};
-	private String[] operators = new String[]{"+", "-"};
-	private String[][] test = new String[][]{keywords, operands, syntax, operands};
-	private ArrayList<struct> topCommands = new ArrayList<struct>();
+
+	private ArrayList<Struc> topCommands = new ArrayList<Struc>();
 	
 	Stack<Function> functionOpens = new Stack<Function>();
 
+	public boolean errors = false;
+
 	public Tokenise(String rawSource){
-		Queue<Line> statements = Parser.parse(rawSource);				// Removes comments
+		Queue<LineMeta> statements = Parser.parse(rawSource);				// Removes comments
 	
 
 		while (statements.size() > 0) { // Loops through each statement (;)
 
-			Line line = statements.poll();
-			String statementText = line.line;
+			LineMeta lineMeta = statements.poll();
+			String statementText = lineMeta.lineText;
 
 
-			boolean valid = false;
-			if (statementText.indexOf(variableOperand) > -1) {
+			boolean lineValid = false;
+			if (statementText.indexOf(variableOperand) > -1) { // Identifies a variable based on the presence of ':='
 				if(functionOpens.size() > 0){
-					functionOpens.peek().addStatement(new Variable(line));
+					functionOpens.peek().addStatement(new Variable(lineMeta));
 				}else
-					topCommands.add(new Variable(line));
-				valid = true;
-			} else if (statementText.indexOf("}") > -1) {
+					topCommands.add(new Variable(lineMeta));
+				lineValid = true;
+			} else if (statementText.indexOf("}") > -1) { // Identifies a close bracket to end a block
 					if(functionOpens.size() > 0){
 						functionOpens.pop();
 					}else{
-						System.out.println("Error, cannot close an unopened thing");
+						System.out.println("SYNTAX ERROR: Stray close on line: " + lineMeta.lineNumber);
+						setError();
+						return;
 					}
-					valid = true;
-			}else{
+					lineValid = true;
+			}else{ // Whatever is left is checked against keywords and a 'function' is created for it
 				for (String keyword: keywords) 
 					if (statementText.indexOf(keyword + "(") > -1) {
 						if(functionOpens.size() == 0){
@@ -57,25 +56,31 @@ public class Tokenise implements Syntax {
 							functionOpens.push((Function) functionOpens.peek().block.peek());	
 						}
 
-						valid = true;
+						lineValid = true;
 						break;
 					}
 			}
 				
 
-			if (!valid) {
-				System.out.println("SYNTAX ERROR: " + statementText + "\nAt line: " + line.lineNumber);
-				return;
+			if (!lineValid) {
+				Error.syntaxError(statementText, lineMeta.lineNumber);
+				setError();
 			}
+		}
+		if(!errors){
+			for(int i = 0; i < topCommands.size(); i++) // All the code at this point makes sense, but not necesserily correct
+				errors = !topCommands.get(i).parse();
 		}
 	}
 
-	public ArrayList<struct> getFullCode(){
-		return topCommands;
+	public Struc popStructure(){
+		return topCommands.remove(0);
 	}
 
-	public struct popStructure(){
-		return topCommands.remove(topCommands.size() -1);
-	}
+	
+	public ArrayList<Struc> getFullCode(){ return topCommands; }
+
+	public void setError(){ errors = true; }
+	public void setError(boolean state){ if(state) errors = true; }
 	
 }

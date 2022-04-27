@@ -1,6 +1,6 @@
 # yeet
 yeet := 4      # lala
-test := num - 4
+num := num - 4
 
 if(test < 3){
     num := 5
@@ -9,4 +9,5 @@ if(test < 3){
         num := num - 1
     }
 }
+
 haha := 7

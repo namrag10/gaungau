@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import Structures.Line;
+import Structures.Meta.LineMeta;
 
 public class Parser {
 
-	public static Queue < Line > parse(String statements) {
+	public static Queue < LineMeta > parse(String statements) {
 
 		statements = statements.replace(" ", "");
 		statements = statements.replace("\n", ";");
@@ -18,29 +18,29 @@ public class Parser {
 
 
 
-		ArrayList<Line> lines = new ArrayList<Line>();
+		ArrayList<LineMeta> lines = new ArrayList<LineMeta>();
 
 		for(int i = 0; i < raw.size(); i++)
-			lines.add(new Line(raw.get(i), i +1));
+			lines.add(new LineMeta(raw.get(i), i +1));
 
 
 
 
 		for (int i = 0; i < lines.size(); i++) {
-			String lineText = lines.get(i).line;
+			String lineText = lines.get(i).lineText;
 			int index = lineText.indexOf("#");
 			if (index == 0) {
 				lines.remove(i);
 				i = -1;
 			} else if (index > -1)
-				lines.get(i).line = lineText.substring(0, index);
+				lines.get(i).lineText = lineText.substring(0, index);
 
 			int braceIndex = lineText.indexOf("}");
 			if (braceIndex > -1 && lineText.length() > 1) {
 				if(amountChars(lineText, '}') > 1)
 					braceIndex++;
-				lines.add(i + 1, new Line(lineText.substring(braceIndex), -1));
-				lines.get(i).line = lineText.substring(0, braceIndex);
+				lines.add(i + 1, new LineMeta(lineText.substring(braceIndex), -1));
+				lines.get(i).lineText = lineText.substring(0, braceIndex);
 				i = -1;
 			}
 
@@ -49,7 +49,7 @@ public class Parser {
 				i = -1;
 			}
 		}
-		Queue<Line> ret = new LinkedList<Line>(lines);
+		Queue<LineMeta> ret = new LinkedList<LineMeta>(lines);
 
 		return ret;
 	}

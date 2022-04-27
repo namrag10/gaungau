@@ -34,8 +34,9 @@ public class App {
 		Tokenise lex = new Tokenise(txtScript);
 
 
-
-		Syntax Syn = new Syntax(lex); 
+		if(!lex.errors){
+			Syntax Syn = new Syntax(lex); 
+		}
 
 
 	}

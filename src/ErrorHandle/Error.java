@@ -5,8 +5,8 @@ public class Error {
         System.out.println("Syntax Error: " + msg + " at line: " + line);
     }
 
-    public static void customError(String msg, int line){
-        System.out.println(msg + " at line: " + line);
+    public static void customError(String msg){
+        System.out.println(msg);
     }
 
     public static void namingError(String msg, int line){

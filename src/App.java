@@ -2,16 +2,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import mainProcesses.Syntax;
-import mainProcesses.Tokenise;
+import ErrorHandle.Error;
+import mainProcesses.CodeGen;
+import mainProcesses.SyntaxAnalysis;
 
 public class App {
 	public static void main(String[] args) throws Exception {
 		if(args.length > 1){
-			print("Interpreter requires ONLY the path of 1 script, not the " + String.valueOf(args.length) + " that you provided");
+			Error.customError("Interpreter requires ONLY the path of 1 script, not the ");
 			return;
 		}else if(args.length < 1){
-			print("Interpreter requires the path of ONE script");
+			Error.customError("Interpreter requires the path of ONE script");
 			return;
 		}
 
@@ -27,21 +28,18 @@ public class App {
 
 			myReader.close();
 		} catch (FileNotFoundException e) {
-			print("Script was not found at path '" + args[0] + ".gng'!");
+			Error.customError("Script was not found at path '" + args[0] + ".gng'!");
 			return;
 		}
 
-		Tokenise lex = new Tokenise(txtScript);
+		SyntaxAnalysis lex = new SyntaxAnalysis(txtScript);
 
 
 		if(!lex.errors){
-			Syntax Syn = new Syntax(lex); 
+			CodeGen Gen = new CodeGen(lex); 
+			Gen.generate();
 		}
 
 
-	}
-
-	private static <T> void print(T msg){
-		System.out.println(msg);
 	}
 }

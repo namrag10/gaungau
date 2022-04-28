@@ -1,9 +1,9 @@
 # yeet
 yeet := 4      # lala
-num := num - 4
+num:=yeet-4+9+
 
 if(test < 3){
-    num := 5
+    num := yeet + 7
     yeet := 78
     while(num > 0){
         num := num - 1

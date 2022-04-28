@@ -33,6 +33,12 @@ public class Variable extends Struc {
 					return false;
 				}
 			}
+			for (char character: chars) {
+				if (lhs.indexOf(character)) {
+					Error.namingError("Cannot create a variable whose LHS is a keyword", lineNumber);
+					return false;
+				}
+			}
 			valid = sortOutRHS();
 		} catch (NumberFormatException e) {
 			valid = false;
@@ -60,16 +66,13 @@ public class Variable extends Struc {
 
         for (char crntChar : rhs.replace(" ", "").toCharArray()) {
             
-            // Term is a symbol.
             if (isOperator(crntChar)) {
-                
                 if (!operandTemp.equals("")) {
                     result.add(operandTemp);
                     operandTemp = "";
                 }
                 operatorTemp = operatorTemp + crntChar;
             } else {
-
                 if (!operatorTemp.equals("")) {
                     result.add(operatorTemp);
                     operatorTemp = "";
@@ -77,9 +80,6 @@ public class Variable extends Struc {
                 operandTemp = operandTemp + crntChar;
             }
         }
-
-
-		
         if (!operatorTemp.equals("")){
 			Error.syntaxError("Invalid RHS of variable", lineNumber);
 			return false;

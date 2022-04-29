@@ -1,42 +1,12 @@
+
 &LDA 4
 STO 0
-&LDA yeet-4+9+
-STO -1
-&LDA 7
-STO 2
-&LDA 4
-STO 0
-&LDA yeet-4+9+
-STO -1
-&LDA 7
-STO 2
-&LDA 4
-STO 0
-&LDA yeet-4+9+
-STO -1
-&LDA 7
-STO 2
-&LDA 4
-STO 0
-&LDA yeet-4+9+
-STO -1
-&LDA 7
-STO 2
-&LDA 4
-STO 0
-&LDA yeet-4+9
+
+
+LDA 0
+&SUB &0
+&ADD 9
 STO 1
-&LDA 7
-STO 3
-&LDA 4
-STO 0
-&LDA yeet-4+9
-STO -1
-&LDA 7
-STO 2
-&LDA 4
-STO 0
-&LDA yeet-4+9
-STO 1
+
 &LDA 7
 STO 3

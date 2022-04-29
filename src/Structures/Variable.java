@@ -5,17 +5,21 @@ import java.util.ArrayList;
 import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
 import Structures.Meta.LineMeta;
+import Syntax.codeControl;
 
 public class Variable extends Struc {
+
+	private final String variableID = "&";
 
 	public String raw;
 	public String lhs = "";
 	public String rhs = "";
 	public int lineNumber;
 	public int address = -1;
-	private char[] chars = new char[] {'=', '!', '<', '>', '(', ')', '+', '-'};
 
-
+	private ArrayList<String> tokens = new ArrayList<String>();
+	public ArrayList<String> instructions = new ArrayList<String>();
+	
 	public Variable(LineMeta rawStatement) {
 		raw = rawStatement.lineText;
 		lineNumber = rawStatement.lineNumber;
@@ -27,72 +31,122 @@ public class Variable extends Struc {
 		try {
 			rhs = raw.substring(raw.indexOf(variableOperand) + 2);
 			lhs = raw.substring(0, raw.indexOf(variableOperand));
+			// Variable name validation
 			for (String keyword: keywords) {
 				if (lhs.equals(keyword)) {
 					Error.namingError("Cannot create a variable whose LHS is a keyword", lineNumber);
 					return false;
 				}
 			}
-			for (char character: chars) {
-				if (lhs.indexOf(character)) {
-					Error.namingError("Cannot create a variable whose LHS is a keyword", lineNumber);
+			for (String character: validChars) {
+				if (lhs.indexOf(character) > 0) {
+					Error.namingError("Cannot create a variable whose LHS contains an operator or operand", lineNumber);
 					return false;
 				}
 			}
-			valid = sortOutRHS();
+			// RHS validation
+			if(parseRHS())
+				valid = build();
+				
 		} catch (NumberFormatException e) {
 			valid = false;
 		}
 
 		if (valid) create(); // False = variable already exists, True = variable created
+
+		
+		instructions.add(codeControl.saveVariable(lhs)); // Store Instruction
+
 		return valid;
 	}
 
-	//BACKUP IN LOL TRASH
 	@Override
 	public boolean create() {
 		boolean ret = MemoryManager.newVariable(lhs);
-		address = MemoryManager.getAddress(lhs);
+		lhs = MemoryManager.getAddress(lhs) + "";
 
 		return ret;
 	}
 
-	public boolean sortOutRHS() {
+	public boolean parseRHS() {
+        String temp = "";
+        for (char t : rhs.toCharArray()) {
 
-        ArrayList<String> result = new ArrayList<String>();
-
-        String operandTemp = "";
-        String operatorTemp = "";
-
-        for (char crntChar : rhs.replace(" ", "").toCharArray()) {
-            
-            if (isOperator(crntChar)) {
-                if (!operandTemp.equals("")) {
-                    result.add(operandTemp);
-                    operandTemp = "";
+            if (isOperator(t + "")) {
+                if (!(temp.equals("")) && !(isOperator(temp.substring(temp.length() - 1)))) {
+                    tokens.add(temp);
+                    temp = "";
                 }
-                operatorTemp = operatorTemp + crntChar;
-            } else {
-                if (!operatorTemp.equals("")) {
-                    result.add(operatorTemp);
-                    operatorTemp = "";
-                }
-                operandTemp = operandTemp + crntChar;
             }
+            temp += t;
         }
-        if (!operatorTemp.equals("")){
-			Error.syntaxError("Invalid RHS of variable", lineNumber);
-			return false;
-		}
-
-		result.add(operandTemp);
+        tokens.add(temp);
+		relateVariables();
         return true;
     }
 
+	public boolean build(){
+		String firstTerm = tokens.remove(0);
 
-	public boolean isOperator(char term) {
-        for (char symbol : chars) 
-            if (symbol == term) return true;
+		// Loading the first term
+		if(firstTerm.substring(0, 1).equals(variableID)){
+			instructions.add(
+				codeControl.loadFromPointer(
+					firstTerm.substring(1))
+			);
+		}else{
+			instructions.add(
+				codeControl.loadLiteral(
+					firstTerm)
+			);
+		}
+
+		// Add subsequent terms
+		for (String token : tokens) {
+			System.out.println(token);
+
+			switch(token.substring(0, 1)){
+				case variableID:
+					instructions.add(
+						codeControl.loadFromPointer(token.substring(1)));
+					break;
+				case "+":
+					instructions.add(
+					 	codeControl.addLiteral(token.substring(1))
+					);
+					break;
+				case "-":
+					instructions.add(
+						codeControl.subLiteral(token.substring(1))
+			   		);
+					break;
+			}
+		}
+
+		return true;
+	}
+
+    public static boolean isOperator(String term) {
+        for (String symbol : validChars) {
+            if (symbol.equals(term)) return true;
+        }
         return false;
     }
+
+	private void relateVariables(){
+		for (int i = 0; i < tokens.size(); i++) {
+
+            String crnt = tokens.get(i);
+			int index = 0;
+			String[] crntChars = crnt.split("");
+			for (String c : crntChars) 
+				for (String d : validChars)
+					if(d.equals(c))
+						index++;
+					
+            int addr = MemoryManager.has(crnt.substring(index));
+            if(addr > -1)
+                tokens.set(i, crnt.substring(0, index) + variableID + addr);
+        }
+	}
 }

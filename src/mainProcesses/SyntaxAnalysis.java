@@ -70,7 +70,7 @@ public class SyntaxAnalysis implements SyntaxCfg {
 		}
 		if (!errors) {
 			for (int i = 0; i < topCommands.size(); i++) // All the code at this point makes sense, but not necesserily correct
-				errors = !topCommands.get(i).parse();
+				setError(!topCommands.get(i).parse());
 		}
 	}
 

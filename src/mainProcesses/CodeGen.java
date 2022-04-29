@@ -23,8 +23,10 @@ public class CodeGen {
 
 			if (structure.getClass() == Variable.class) { // Found a variable
 				Variable command = (Variable) structure;
-				append(codeControl.literalVariableCode(command.rhs));
-				append(codeControl.saveVariable(command.address));
+				for (String instruction : command.instructions) {
+					append(instruction);
+				}
+				
 			} else if (structure.getClass() == Function.class) { // Found a function (look inside)
 
 			}

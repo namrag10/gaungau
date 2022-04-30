@@ -1,9 +1,8 @@
 package Structures.Meta;
 
-import Structures.Struc;
+public class Condition {
 
-public class Condition extends Struc {
-
+    public String raw;
     public String condition = "";
 
     public Condition(String rawStatement){

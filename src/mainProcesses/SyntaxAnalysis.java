@@ -41,25 +41,29 @@ public class SyntaxAnalysis implements SyntaxCfg {
 				if (functionOpens.size() > 0) {
 					functionOpens.pop();
 				} else {
-					Error.syntaxError("Stray close on line: ", lineMeta.lineNumber);
+					Error.syntaxError("Stray '}' on line: ", lineMeta.lineNumber);
 					setError();
 					return;
 				}
 				lineValid = true;
 			} else { // Whatever is left is checked against keywords and a 'function' is created for it
-				for (String keyword: keywords)
-					if (statementText.indexOf(keyword) > -1) {
+				
+				Boolean funcId = (statementText.indexOf("()") > -1);
+				for (int i = 0; i < keywords.length || funcId;i++)
+					if (statementText.indexOf(keywords[i]) > -1 || funcId) {
 						if (functionOpens.size() == 0) {
-							topCommands.add(new Function(statementText));
+							topCommands.add(new Function(lineMeta));
 							functionOpens.push((Function) topCommands.get(topCommands.size() - 1));
 						} else {
-							functionOpens.peek().addStatement(new Function(statementText));
+							functionOpens.peek().addStatement(new Function(lineMeta));
 							functionOpens.push((Function) functionOpens.peek().block.peek());
 						}
-
 						lineValid = true;
 						break;
 					}
+
+				if(!lineValid)
+					System.out.println("TEST");
 			}
 
 
@@ -68,9 +72,19 @@ public class SyntaxAnalysis implements SyntaxCfg {
 				setError();
 			}
 		}
+
+		if(functionOpens.size() > 0){
+			for (Function openFunc : functionOpens) {
+				Error.syntaxError("Missing '}' for function", openFunc.lineNumber);
+			}
+			setError();
+		}
+
 		if (!errors) {
-			for (int i = 0; i < topCommands.size(); i++) // All the code at this point makes sense, but not necesserily correct
+			for (int i = 0; i < topCommands.size(); i++){ // All the code at this point makes sense, but not necesserily correct
 				setError(!topCommands.get(i).parse());
+				if(errors) break;
+			}
 		}
 	}
 

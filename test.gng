@@ -1,7 +1,7 @@
 # yeet
-yeet := 4      # lala
-while:=yeet-yeet+9
+yeet:= 7   # lala
 
+test:=5
 if(test < 3){
     num := yeet + 7
     yeet := 78

@@ -14,6 +14,8 @@ import subProcesses.Parser;
 public class SyntaxAnalysis implements SyntaxCfg {
 
 
+	private int instructionCount = 0;
+
 	private ArrayList < Struc > topCommands = new ArrayList < Struc > ();
 
 	Stack < Function > functionOpens = new Stack < Function > ();

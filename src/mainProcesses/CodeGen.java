@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import ErrorHandle.Error;
 import Structures.*;
-import Structures.Functions.Function;
 
 public class CodeGen {
 
@@ -29,18 +28,11 @@ public class CodeGen {
 		ArrayList < Struc > code = codeTree.getFullCode();
 
 		for (Struc structure: code) {
-
-			if (structure.getClass() == Variable.class) { // Found a variable
-				Variable command = (Variable) structure;
-				for (String instruction: command.instructions) {
-					if(!append(instruction)){
-						Error.customError("Could not write to file!");
-						return false;
-					}
+			for(String instruction : structure.buildAndGetInstructions()){
+				if(!append(instruction)){
+					Error.customError("Could not write to file!");
+					return false;
 				}
-
-			} else if (structure.getClass() == Function.class) { // Found a function (look inside)
-				
 			}
 		}
 		System.out.println("GNG Success! Written to file output.asm");

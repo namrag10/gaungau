@@ -63,9 +63,6 @@ public class SyntaxAnalysis implements SyntaxCfg {
 						lineValid = true;
 						break;
 					}
-
-				if(!lineValid)
-					System.out.println("TEST");
 			}
 
 
@@ -84,7 +81,10 @@ public class SyntaxAnalysis implements SyntaxCfg {
 
 		if (!errors) {
 			for (int i = 0; i < topCommands.size(); i++){ // All the code at this point makes sense, but not necesserily correct
-				setError(!topCommands.get(i).parse());
+				if(!setError(!topCommands.get(i).parse(instructionCount))){
+
+					instructionCount += topCommands.get(i).instructionCount();
+				}
 				if(errors) break;
 			}
 		}
@@ -102,8 +102,9 @@ public class SyntaxAnalysis implements SyntaxCfg {
 	public void setError() {
 		errors = true;
 	}
-	public void setError(boolean state) {
+	public boolean setError(boolean state) {
 		if (state) errors = true;
+		return errors;
 	}
 
 }

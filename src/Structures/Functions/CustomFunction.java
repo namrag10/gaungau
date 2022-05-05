@@ -1,12 +1,15 @@
 package Structures.Functions;
 
-import Structures.Struc;
 
 // This is not yet implemnted on the hardware
-public class CustomFunction extends Struc {
+public class CustomFunction extends FunctionMeta {
 
-    @Override
-    public boolean parse() {
+    public CustomFunction(int open) {
+        super(open);
+        //TODO Auto-generated constructor stub
+    }
+
+    public boolean parse(int fromLine) {
 
         return true;
     }

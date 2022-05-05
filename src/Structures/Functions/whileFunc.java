@@ -1,5 +1,12 @@
 package Structures.Functions;
 
-public class whileFunc {
+import Structures.Struc;
+
+public class whileFunc extends FunctionMeta {
+
+    public whileFunc(int open) {
+        super(open);
+        //TODO Auto-generated constructor stub
+    }
     
 }

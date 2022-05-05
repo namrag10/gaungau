@@ -1,7 +1,5 @@
 package Structures;
 
-import java.util.ArrayList;
-
 import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
 import Structures.Meta.LineMeta;
@@ -16,9 +14,7 @@ public class Variable extends Struc {
 	public String rhs;
 	public int lineNumber;
 	public int address = -1;
-
-	private ArrayList < String > tokens = new ArrayList < String > ();
-	public ArrayList < String > instructions = new ArrayList < String > ();
+	
 
 	public Variable(LineMeta rawStatement) {
 		raw = rawStatement.lineText;
@@ -27,7 +23,7 @@ public class Variable extends Struc {
 
 	// Main method
 	@Override
-	public boolean parse() {
+	public boolean parse(int fromLine) {
 		boolean valid = false;
 		try {
 			// Gets the left and right basic strings based on variable identifier

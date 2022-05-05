@@ -5,7 +5,17 @@ test:=5
 if(test < 3){
     num := yeet + 7
     yeet := 78
-    while(num > 0){
+    if(num > 0){
+        num := num - 1
+    }
+    if(num > 0){
+        num := num - 1
+        yeet := 6
+        while(){
+            num := 9
+        }
+    }
+    if(num > 0){
         num := num - 1
     }
 }

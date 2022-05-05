@@ -1,5 +1,6 @@
 package Structures.Functions;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import Structures.Struc;
@@ -8,11 +9,13 @@ import Structures.Meta.LineMeta;
 
 public class Function extends Struc {
 
+
     public Condition condition;
     public Stack<Struc> block = new Stack<Struc>();
-    private Object functionality;
+    private FunctionMeta functionality;
     public String raw;
     public int lineNumber;
+    private int startingInstrucLine = 0;
     // private struct type;
 
     public Function(LineMeta rawStatement){
@@ -22,25 +25,37 @@ public class Function extends Struc {
     }
 
     @Override
-    public boolean parse(){
-        
+    public boolean parse(int crntILine){
+        startingInstrucLine = crntILine;
         switch(getType()){
             case "if":
-                functionality = new ifFunc();
+                functionality = new ifFunc(startingInstrucLine);
                 break;
             case "while":
-                functionality = new whileFunc();
+                functionality = new whileFunc(startingInstrucLine);
                 break;
             default:
-                functionality = new CustomFunction();
+                functionality = new CustomFunction(startingInstrucLine);
                 System.out.println(raw + " NEW FUNCTION - noted by not implemented");
                 break;
         }
+        
+        crntILine += functionality.preBlock.size();
 
         // Discover structures in block
-        for (Struc structure : block)  
-            if(!structure.parse())
+        // Hot recursion going on here
+        for (Struc structure : block) {
+            if(!structure.parse(crntILine))
                 return false;
+            crntILine += structure.instructionCount();
+        }
+
+        instructionsInBlock += crntILine - startingInstrucLine;
+        return true;
+    }
+
+    public boolean execute(){
+        // functionality
         return true;
     }
 
@@ -54,5 +69,24 @@ public class Function extends Struc {
 
     private String getType(){
         return raw.substring(0, raw.indexOf("("));
+    }
+
+
+    // Sexy polymorphism going on here
+    @Override
+    public ArrayList<String> buildAndGetInstructions(){
+        
+        for (String string : functionality.preBlock) 
+            instructions.add(string + "\n");
+
+        for (Struc structure : block)
+            for (String string : structure.buildAndGetInstructions()) {
+                instructions.add(string);
+            }
+        
+        for (String string : functionality.postBlock) 
+            instructions.add(string + "\n");
+        
+        return instructions;
     }
 }

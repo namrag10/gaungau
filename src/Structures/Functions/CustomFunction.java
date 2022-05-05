@@ -1,11 +1,12 @@
 package Structures.Functions;
 
+import Structures.Meta.Condition;
 
 // This is not yet implemnted on the hardware
-public class CustomFunction extends FunctionMeta {
+public class CustomFunction extends FunctionWorkings {
 
-    public CustomFunction(int open) {
-        super(open);
+    public CustomFunction(int open, Condition condition) {
+        super(open, condition);
         //TODO Auto-generated constructor stub
     }
 

@@ -12,7 +12,7 @@ public class Function extends Struc {
 
     public Condition condition;
     public Stack<Struc> block = new Stack<Struc>();
-    private FunctionMeta functionality;
+    private FunctionWorkings functionality;
     public String raw;
     public int lineNumber;
     private int startingInstrucLine = 0;
@@ -29,17 +29,17 @@ public class Function extends Struc {
         startingInstrucLine = crntILine;
         switch(getType()){
             case "if":
-                functionality = new ifFunc(startingInstrucLine);
+                functionality = new ifFunc(startingInstrucLine, condition);
                 break;
             case "while":
-                functionality = new whileFunc(startingInstrucLine);
+                functionality = new whileFunc(startingInstrucLine, condition);
                 break;
             default:
-                functionality = new CustomFunction(startingInstrucLine);
+                functionality = new CustomFunction(startingInstrucLine, condition);
                 System.out.println(raw + " NEW FUNCTION - noted by not implemented");
                 break;
         }
-        
+        functionality.generateCondition();
         crntILine += functionality.preBlock.size();
 
         // Discover structures in block
@@ -49,7 +49,8 @@ public class Function extends Struc {
                 return false;
             crntILine += structure.instructionCount();
         }
-
+        functionality.closeHandle(crntILine);
+        crntILine += functionality.postBlock.size();
         instructionsInBlock += crntILine - startingInstrucLine;
         return true;
     }

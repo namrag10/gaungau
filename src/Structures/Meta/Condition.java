@@ -21,7 +21,7 @@ public class Condition extends Struc {
 
     public boolean parse(){
 
-        return true;
+        return false;
     }
 
 

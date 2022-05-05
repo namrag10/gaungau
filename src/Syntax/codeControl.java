@@ -29,4 +29,8 @@ public class codeControl {
     public static String subPointer(String pointer){
         return "SUB " + pointer + "\n";
     }
+
+    public static String unconditionalBranch(int ILine){
+        return "BRA " + ILine;
+    }
 }

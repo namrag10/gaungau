@@ -1,12 +1,18 @@
 package Structures.Functions;
 
-import Structures.Struc;
+import Structures.Meta.Condition;
+import Syntax.codeControl;
 
-public class whileFunc extends FunctionMeta {
+public class whileFunc extends FunctionWorkings {
 
-    public whileFunc(int open) {
-        super(open);
-        //TODO Auto-generated constructor stub
+    public whileFunc(int openAt, Condition condition) {
+        super(openAt, condition);
+        preBlock.add("Open while at line: " + starting);
+    }
+
+    @Override
+    public void closeHandle(int close){
+        postBlock.add(codeControl.unconditionalBranch(starting));
     }
     
 }

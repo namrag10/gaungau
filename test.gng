@@ -12,7 +12,7 @@ if(test < 3){
         num := num - 1
         yeet := 6
         while(){
-            num := 9
+            lmao := 5000
         }
     }
     if(num > 0){

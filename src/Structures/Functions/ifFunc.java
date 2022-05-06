@@ -14,7 +14,7 @@ public class ifFunc extends FunctionWorkings {
 
     @Override
     public void closeHandle(int close){
-        preBlock.add(codeControl.unconditionalBranch(close +1));
+        preBlock.add(codeControl.unconditionalBranch(close));
     }
 
     @Override
@@ -22,6 +22,13 @@ public class ifFunc extends FunctionWorkings {
         funcCondition.parse();
         preBlock = funcCondition.instructions;
         return true;
+    }
+
+    @Override
+    public int preInstructionCount(){
+        if(closed)
+            return preBlock.size();
+        return preBlock.size() +1;
     }
 
 }

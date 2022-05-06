@@ -21,12 +21,12 @@ public class Function extends Struc {
     public Function(LineMeta rawStatement){
         raw = rawStatement.lineText;
         lineNumber = rawStatement.lineNumber;
-        condition = new Condition(extractCondition(), lineNumber, startingInstrucLine);
     }
-
+    
     @Override
     public boolean parse(int crntILine){
         startingInstrucLine = crntILine;
+        condition = new Condition(extractCondition(), lineNumber, startingInstrucLine);
         switch(getType()){
             case "if":
                 functionality = new ifFunc(startingInstrucLine, condition);
@@ -41,7 +41,7 @@ public class Function extends Struc {
         }
 
         functionality.generateCondition();
-        crntILine += functionality.preBlock.size();
+        crntILine += functionality.preInstructionCount();
 
         // Discover structures in block
         // Hot recursion going on here
@@ -50,14 +50,10 @@ public class Function extends Struc {
                 return false;
             crntILine += structure.instructionCount();
         }
+
         functionality.closeHandle(crntILine);
         crntILine += functionality.postBlock.size();
         instructionsInBlock += crntILine - startingInstrucLine;
-        return true;
-    }
-
-    public boolean execute(){
-        // functionality
         return true;
     }
 

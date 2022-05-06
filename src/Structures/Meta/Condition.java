@@ -63,8 +63,10 @@ public class Condition extends Struc {
                     instructions.add(codeControl.load(lhs));
                     instructions.add(codeControl.sub(rhs));
                     instructions.add(codeControl.carryBranch(ILine + 4));
+                    break;
                 default:
                     Error.syntaxError("unsupported operand in condition", lineNumber);
+                    return false;
             }
         }
 

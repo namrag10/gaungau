@@ -7,7 +7,7 @@ public class whileFunc extends FunctionWorkings {
 
     public whileFunc(int openAt, Condition condition) {
         super(openAt, condition);
-        preBlock.add("Open while at line: " + starting);
+        preBlock.add("Open while at line: " + starting + "\n");
     }
 
     @Override

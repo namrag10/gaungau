@@ -8,6 +8,7 @@ public class FunctionWorkings {
     public ArrayList<String> preBlock = new ArrayList<String>();
     public ArrayList<String> postBlock = new ArrayList<String>();
     Condition funcCondition;
+    protected boolean closed = false;
 
     protected int starting;
     protected int closing;
@@ -19,9 +20,14 @@ public class FunctionWorkings {
 
     public void closeHandle(int close){
         closing = close;
+        closed = true;
     }
 
     public boolean generateCondition(){
         return true;
+    }
+
+    public int preInstructionCount(){
+        return preBlock.size();
     }
 }

@@ -1,6 +1,7 @@
 package Structures.Functions;
 
 import Structures.Meta.Condition;
+import Syntax.codeControl;
 
 public class ifFunc extends FunctionWorkings {
 
@@ -13,11 +14,13 @@ public class ifFunc extends FunctionWorkings {
 
     @Override
     public void closeHandle(int close){
-        postBlock.add("Closing if at: " + close);
+        preBlock.add(codeControl.unconditionalBranch(close +1));
     }
 
     @Override
     public boolean generateCondition(){
+        funcCondition.parse();
+        preBlock = funcCondition.instructions;
         return true;
     }
 

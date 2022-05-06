@@ -20,8 +20,8 @@ public class Function extends Struc {
 
     public Function(LineMeta rawStatement){
         raw = rawStatement.lineText;
-        condition = new Condition(extractCondition());
         lineNumber = rawStatement.lineNumber;
+        condition = new Condition(extractCondition(), lineNumber, startingInstrucLine);
     }
 
     @Override
@@ -39,6 +39,7 @@ public class Function extends Struc {
                 System.out.println(raw + " NEW FUNCTION - noted by not implemented");
                 break;
         }
+
         functionality.generateCondition();
         crntILine += functionality.preBlock.size();
 
@@ -78,7 +79,7 @@ public class Function extends Struc {
     public ArrayList<String> buildAndGetInstructions(){
         
         for (String string : functionality.preBlock) 
-            instructions.add(string + "\n");
+            instructions.add(string);
 
         for (Struc structure : block)
             for (String string : structure.buildAndGetInstructions()) {
@@ -86,7 +87,7 @@ public class Function extends Struc {
             }
         
         for (String string : functionality.postBlock) 
-            instructions.add(string + "\n");
+            instructions.add(string);
         
         return instructions;
     }

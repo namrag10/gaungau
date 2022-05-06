@@ -7,8 +7,6 @@ import Syntax.codeControl;
 
 public class Variable extends Struc {
 
-	private final String variableID = "&";
-
 	public String raw;
 	public String lhs = "";
 	public String rhs;
@@ -102,17 +100,11 @@ public class Variable extends Struc {
 		}
 
 		// Loading the first term
-		if (firstTerm.substring(0, 1).equals(variableID)) {
-			instructions.add(
-				codeControl.loadFromPointer(
-					firstTerm.substring(1))
-			);
-		} else {
-			instructions.add(
-				codeControl.loadLiteral(
-					firstTerm)
-			);
-		}
+		instructions.add(
+			codeControl.load(
+				firstTerm)
+		);
+		
 
 		// Add subsequent terms
 		for (String token: tokens) {
@@ -120,24 +112,14 @@ public class Variable extends Struc {
 
 			switch (extractOperands(token)) {
 				case "+":
-					if (isPointer(token)) {
-						instructions.add(
-							codeControl.addPointer(extractAfterOperands(token).substring(1))
-						);
-					} else
-						instructions.add(
-							codeControl.addLiteral(extractAfterOperands(token))
-						);
+					instructions.add(
+						codeControl.add(extractAfterOperands(token))
+					);
 					break;
 				case "-":
-					if (isPointer(token)) {
-						instructions.add(
-							codeControl.subPointer(extractAfterOperands(token).substring(1))
-						);
-					} else
-						instructions.add(
-							codeControl.subLiteral(extractAfterOperands(token))
-						);
+					instructions.add(
+						codeControl.sub(extractAfterOperands(token))
+					);
 					break;
 				default:
 					Error.syntaxError("RHS of variable invalid", lineNumber);

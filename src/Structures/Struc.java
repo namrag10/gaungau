@@ -28,5 +28,6 @@ public class Struc implements SyntaxCfg {
     public ArrayList<String> buildAndGetInstructions(){
         return instructions;
     }
+    
 
 }

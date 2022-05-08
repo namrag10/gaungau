@@ -58,11 +58,17 @@ public class Condition extends Struc {
         }
 
         if(!lhs.equals("") && !rhs.equals("") && !operand.equals("")){
+            instructions.add(codeControl.load(lhs));
+            instructions.add(codeControl.sub(rhs));
             switch(operand){
                 case "<":
-                    instructions.add(codeControl.load(lhs));
-                    instructions.add(codeControl.sub(rhs));
                     instructions.add(codeControl.carryBranch(ILine + 4));
+                    break;
+                case ">":
+                    instructions.add(codeControl.posBranch(ILine + 4));
+                    break;
+                case "==":
+                    instructions.add(codeControl.zeroBranch(ILine + 4));
                     break;
                 default:
                     Error.syntaxError("unsupported operand in condition", lineNumber);

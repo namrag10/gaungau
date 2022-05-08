@@ -34,6 +34,9 @@ public class Function extends Struc {
             case "while":
                 functionality = new whileFunc(startingInstrucLine, condition);
                 break;
+            case "exit":
+                functionality = new exitFunc(startingInstrucLine, condition);
+                break;
             default:
                 functionality = new CustomFunction(startingInstrucLine, condition);
                 System.out.println(raw + " NEW FUNCTION - noted by not implemented");

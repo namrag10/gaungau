@@ -2,7 +2,7 @@ package Syntax;
 
 public interface SyntaxCfg {
     
-    String[] keywords = new String[]{"if(", "while(", "else"};
+    String[] keywords = new String[]{"if(", "while(", "else", "exit("};
 	
 	String[] operands = new String[]{"==", "!=", "<=", ">=", "<", ">"};
 	String[] operandSingle = new String[]{"=", "!", "<", ">"};

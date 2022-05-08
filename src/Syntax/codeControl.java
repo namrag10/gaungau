@@ -31,6 +31,10 @@ public class codeControl implements SyntaxCfg{
         return "BRP " + ILine + "\n";
     }
 
+    public static String halt(){
+        return "HLT\n";
+    }
+
 
 
     private static String handle(String command, String number){

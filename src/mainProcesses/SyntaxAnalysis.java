@@ -32,13 +32,15 @@ public class SyntaxAnalysis implements SyntaxCfg {
 			String statementText = lineMeta.lineText;
 
 
-			boolean lineValid = false;
+			boolean lineValid = true;
+			// ======= VARIABLE ======= \\
 			if (statementText.indexOf(variableOperand) > -1) { // Identifies a variable based on the presence of ':='
 				if (functionOpens.size() > 0) {
 					functionOpens.peek().addStatement(new Variable(lineMeta));
 				} else
 					topCommands.add(new Variable(lineMeta));
-				lineValid = true;
+
+			// ======= CLOSE FUNCTION ======= \\
 			} else if (statementText.indexOf("}") > -1) { // Identifies a close bracket to end a block
 				if (functionOpens.size() > 0) {
 					functionOpens.pop();
@@ -47,12 +49,14 @@ public class SyntaxAnalysis implements SyntaxCfg {
 					setError();
 					return;
 				}
-				lineValid = true;
+
+			// ======= POSSIBLE FUNCTION ======= \\
 			} else { // Whatever is left is checked against keywords and a 'function' is created for it
-				
-				Boolean funcId = (statementText.indexOf("()") > -1);
-				for (int i = 0; i < keywords.length || funcId;i++)
-					if (statementText.indexOf(keywords[i]) > -1 || funcId) {
+			
+				// ======= CHECKS FOR KEYWORDS ======= \\
+				int i = 0;
+				for (i = 0; i < keywords.length; i++) // Checks against keywords
+					if (statementText.indexOf(keywords[i]) > -1) {
 						if (functionOpens.size() == 0) {
 							topCommands.add(new Function(lineMeta));
 							functionOpens.push((Function) topCommands.get(topCommands.size() - 1));
@@ -60,9 +64,20 @@ public class SyntaxAnalysis implements SyntaxCfg {
 							functionOpens.peek().addStatement(new Function(lineMeta));
 							functionOpens.push((Function) functionOpens.peek().block.peek());
 						}
-						lineValid = true;
 						break;
 					}
+
+				if (i == keywords.length) { // The the for loop condition failed, meaning no break was triggered
+					Boolean funcId = (statementText.indexOf(functionIdentifier) > -1);
+					if (funcId) {
+						if (functionOpens.size() > 0) {
+							functionOpens.peek().addStatement(new Function(lineMeta));
+						} else
+							topCommands.add(new Function(lineMeta));
+					} else {
+						lineValid = false;
+					}
+				}
 			}
 
 
@@ -72,20 +87,19 @@ public class SyntaxAnalysis implements SyntaxCfg {
 			}
 		}
 
-		if(functionOpens.size() > 0){
-			for (Function openFunc : functionOpens) {
+		if (functionOpens.size() > 0) {
+			for (Function openFunc: functionOpens) {
 				Error.syntaxError("Missing '}' for function", openFunc.lineNumber);
 			}
 			setError();
 		}
 
 		if (!errors) {
-			for (int i = 0; i < topCommands.size(); i++){ // All the code at this point makes sense, but not necesserily correct
-				if(!setError(!topCommands.get(i).parse(instructionCount))){
-
+			for (int i = 0; i < topCommands.size(); i++) { // All the code at this point makes sense, but not necesserily correct
+				if (!setError(!topCommands.get(i).parse(instructionCount))) {
 					instructionCount += topCommands.get(i).instructionCount();
 				}
-				if(errors) break;
+				if (errors) break;
 			}
 		}
 	}

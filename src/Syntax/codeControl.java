@@ -13,8 +13,8 @@ public class codeControl implements SyntaxCfg{
         return handle("SUB", number);
     }
 
-    public static String saveVariable(String varAddr){
-        return "STO " + varAddr + "\n";
+    public static String store(String param){
+        return "STO " + param + "\n";
     }
 
 

@@ -19,7 +19,8 @@ public class ifFunc extends FunctionWorkings {
 
     @Override
     public boolean generateCondition(){
-        funcCondition.parse();
+        if(!funcCondition.parse(starting))
+            return false;
         preBlock = funcCondition.instructions;
         return true;
     }

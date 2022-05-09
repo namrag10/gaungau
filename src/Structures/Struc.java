@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Syntax.SyntaxCfg;
 
 public class Struc implements SyntaxCfg {
+    
     public int lineNumber;
     protected String raw;
     protected int instructionsInBlock = 0;
@@ -12,7 +13,7 @@ public class Struc implements SyntaxCfg {
     public ArrayList < String > instructions = new ArrayList < String > ();
     protected ArrayList < String > tokens = new ArrayList < String > ();
 
-    public boolean parse(int fromLine) {
+    public boolean parse(int crntILine) {
         return false;
     }
 
@@ -29,5 +30,30 @@ public class Struc implements SyntaxCfg {
         return instructions;
     }
     
+    public boolean isOperator(String term) {
+		for (String symbol: operators)
+			if (symbol.equals(term)) return true;
+		return false;
+	}
+
+    public String extractOperands(String name) {
+		int index = 0;
+		String[] crntChars = name.split("");
+		for (String chr: crntChars)
+			for (String vChr: operators)
+				if (vChr.equals(chr))
+					index++;
+		return name.substring(0, index);
+	}
+
+	public String extractAfterOperands(String name) {
+		int index = 0;
+		String[] crntChars = name.split("");
+		for (String chr: crntChars)
+			for (String vChr: operators)
+				if (vChr.equals(chr))
+					index++;
+		return name.substring(index);
+	}
 
 }

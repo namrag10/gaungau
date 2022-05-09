@@ -1,143 +1,167 @@
 package Structures.Meta;
 
+
+import java.util.ArrayList;
+
 import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
+import Identify.asmGen;
 import Structures.Struc;
 import Syntax.codeControl;
 public class Condition extends Struc {
 
     private String raw;
     private String condition = "";
+    private ArrayList < ArrayList < String > > tokensList = new ArrayList < ArrayList < String > > ();
     private int ILine = 0;
-    
 
-    // x < y === x - y === if carries (BRC <skip BRA>) then allow, else skip (BRA <end of block>)
-    // 2 - 1 (FALSE)
 
-    // LDA x
-    // SUB y
-    // BRC <crnt + 2>
-    // BRA <Skip block>
-
-    public Condition(String rawStatement, int lineNo, int ILine){
+    public Condition(String rawStatement, int lineNumber) {
         raw = rawStatement;
-        lineNumber = lineNo;
-        this.ILine = ILine;
+        super.lineNumber = lineNumber;
     }
 
-    public boolean parse(){
+    @Override
+    public boolean parse(int ILine) {
+        this.ILine = ILine;
+        if (raw.indexOf(")") == -1) {
+            Error.syntaxError("No close bracket on condition", lineNumber);
+            return false;
+        }
         condition = raw.substring(1, raw.indexOf(")"));
-        tokenise();
 
 
-        String lhs = "";
-        String rhs = "";
-        String operand = "";
-        for (String token : tokens) {
-            if(lhs.equals("") && rhs.equals("") && operand.equals("")){
-                if(!isOperand(token)){
-                    lhs = token;
-                    continue;
-                } Error.syntaxError("inside condition #1", lineNumber);
-            }
+        if (!tokenise()) return false;
+        build();
 
-            if(!lhs.equals("") && rhs.equals("") && operand.equals("")){
-                if(isOperand(token)){
-                    operand = token;
-                    continue;
-                }else Error.syntaxError("inside condition #2", lineNumber);
-            }
 
-            if(!lhs.equals("") && rhs.equals("") && !operand.equals("")){
-                if(!isOperand(token)){
-                    rhs = token;
-                    continue;
-                } Error.syntaxError("inside condition #4", lineNumber);
-            }
 
-        }
-
-        if(!lhs.equals("") && !rhs.equals("") && !operand.equals("")){
-            instructions.add(codeControl.load(lhs));
-            instructions.add(codeControl.sub(rhs));
-            switch(operand){
-                case "<":
-                    instructions.add(codeControl.carryBranch(ILine + 4));
-                    break;
-                case ">":
-                    instructions.add(codeControl.posBranch(ILine + 4));
-                    break;
-                case "==":
-                    instructions.add(codeControl.zeroBranch(ILine + 4));
-                    break;
-                default:
-                    Error.syntaxError("unsupported operand in condition", lineNumber);
-                    return false;
-            }
-        }
 
         return true;
     }
 
 
-    public boolean tokenise() {
-		if(condition.indexOf(variableOperand) > -1) {
-			Error.syntaxError("Cannot include multiple defining syntax on one line!", lineNumber);
-			return false;
-		}
-
-        String operandTemp = "";
-        String otherTemp = "";
-
-		for (char t : condition.toCharArray()) {
-			if (isOperandSingleChar(t + "")) {
-                operandTemp += t;
-				if (!otherTemp.equals("")) {
-					tokens.add(otherTemp);
-					otherTemp = "";
-				}
-			}else{
-                otherTemp += t;
-                if (!operandTemp.equals("")) {
-					tokens.add(operandTemp);
-					operandTemp = "";
-				}
+    private boolean build() {
+        // ArrayList<String> temp = new ArrayList<String>();
+        int count = 0;
+        tokensList.add(new ArrayList < String > ());
+        for (String token: tokens) {
+            if (isOperatorKey(token)) {
+                count++;
+                tokensList.add(new ArrayList < String > ());
+            } else {
+                tokensList.get(count).add(token);
             }
-		}
-		tokens.add(otherTemp);
-		return relateVariables();
-	}
+        }
+
+        for (ArrayList < String > tokenList: tokensList) {
+            String operatorInstrucHold = "";
+            while (tokenList.size() > 0) {
+                String firstTerm = tokenList.remove(tokenList.size() -1);
+                if (firstTerm.length() == 0) {
+                    Error.syntaxError("No condition", lineNumber);
+                    return false;
+                }
+
+                // Loading the first term
+                instructions.add(
+                    codeControl.load(firstTerm)
+                );
+
+                // need to add logic to reverse the lhs and rhs without affecting eachother or operand
+
+                if(isOperand(tokenList.get(tokenList.size() -1))){
+                    operatorInstrucHold = tokenList.remove(tokenList.size() -1);
+                    continue;
+                }
+                // Add subsequent terms
+                while (tokenList.size() > 0) {
+                    String token = tokenList.remove(tokenList.size() -1);
+                    if (isOperand(token)) {
+                        // operatorInstrucHold = asmGen.operandTranslate(token, ILine + instructionCount() + 1);
+                        operatorInstrucHold = token;
+                        instructions.add(codeControl.store("255"));
+                        break;
+                    } else
+                        instructions.add(asmGen.operatorTranslate(
+                            extractOperands(token),
+                            extractAfterOperands(token)));
+                }
+            }
+            instructions.add(asmGen.operandTranslate(operatorInstrucHold, ILine + instructionCount() + 1));
+        }
+        return true;
+    }
 
 
+
+    private boolean tokenise() {
+        if (condition.indexOf(variableOperand) > -1) {
+            Error.syntaxError("Cannot include multiple defining syntax on one line!", lineNumber);
+            return false;
+        }
+
+        String temp = "";
+        for (char t: condition.toCharArray()) {
+            if (isOperandSingleChar(t + "")) {
+                if (!(temp.equals("")) && !(isOperandSingleChar(temp.substring(temp.length() - 1)))) {
+                    tokens.add(temp);
+                    temp = "";
+                }
+            }
+            temp += t;
+            if (isOperand(temp)) {
+                tokens.add(temp);
+                temp = "";
+            }
+        }
+        tokens.add(temp);
+
+        return relateVariables();
+    }
 
     private boolean relateVariables() {
-		for (int i = 0; i < tokens.size(); i++) {
+        for (int i = 0; i < tokens.size(); i++) {
 
-			String value = tokens.get(i);
+            String value = tokens.get(i);
 
-			int addr = -2;
-			if (!value.toUpperCase().equals(value.toLowerCase())) {
-				addr = MemoryManager.has(value);
-				if (addr == -1) {
-					Error.syntaxError("Variable: " + value + " does not exist", lineNumber);
-					return false;
-				}
-				tokens.set(i, variableID + addr + "");
-			}
-		}
-		return true;
-	}
+            int addr = -2;
+            if (!value.toUpperCase().equals(value.toLowerCase())) {
+                addr = MemoryManager.has(value);
+                if (addr == -1) {
+                    Error.syntaxError("Variable: " + value + " does not exist", lineNumber);
+                    return false;
+                }
+                tokens.set(i, variableID + addr + "");
+            }
+        }
+        return true;
+    }
 
-    public boolean isOperandSingleChar(String term) {
-		for (String symbol: operandSingle)
-			if (symbol.equals(term)) return true;
-		return false;
-	}
+    private boolean isOperandSingleChar(String term) {
+        for (String symbol: singles)
+            if (symbol.equals(term)) return true;
+
+        for (String symbol: operators)
+            if (symbol.equals(term)) return true;
+        return false;
+    }
 
     public boolean isOperand(String term) {
-		for (String symbol: operands)
-			if (symbol.equals(term)) return true;
-		return false;
-	}
+        for (String symbol: operands)
+            if (symbol.equals(term)) return true;
+        return false;
+    }
+
+    public boolean isOperatorKey(String term) {
+        for (String symbol: operatorKeywords)
+            if (symbol.equals(term)) return true;
+        return false;
+    }
+
+
+    public String getRaw() {
+        return raw;
+    }
 
 }

@@ -3,6 +3,7 @@ package Structures.Functions;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import ErrorHandle.Error;
 import Structures.Struc;
 import Structures.Meta.Condition;
 import Structures.Meta.LineMeta;
@@ -26,7 +27,11 @@ public class Function extends Struc {
     @Override
     public boolean parse(int crntILine){
         startingInstrucLine = crntILine;
-        condition = new Condition(extractCondition(), lineNumber, startingInstrucLine);
+        condition = new Condition(extractCondition(), lineNumber);
+        if(condition.getRaw() == null){
+            Error.syntaxError("No condition found", lineNumber);
+            return false;
+        }
         switch(getType()){
             case "if":
                 functionality = new ifFunc(startingInstrucLine, condition);
@@ -43,7 +48,8 @@ public class Function extends Struc {
                 break;
         }
 
-        functionality.generateCondition();
+        if(!functionality.generateCondition())
+            return false;
         crntILine += functionality.preInstructionCount();
 
         // Discover structures in block
@@ -65,7 +71,8 @@ public class Function extends Struc {
     }
 
     private String extractCondition(){
-        return raw.substring(raw.indexOf("("));
+        int bracketIndex = raw.indexOf("(");
+        return (bracketIndex > -1) ? raw.substring(bracketIndex) : null;
     }
 
     private String getType(){

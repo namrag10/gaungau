@@ -1,8 +1,9 @@
+yeet := 0 + 4 - 90
 
-
-if(2 == 5){
+if(yeet + 7 == yeet){
     num := 9
-    exit()}
+    exit()
 }
+
 num := 15
-exit(){}
+exit()

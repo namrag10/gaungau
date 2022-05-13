@@ -52,6 +52,9 @@ public class Variable extends Struc {
 					return false;
 				}
 			}
+			if(lhs.toLowerCase().equals(lhs.toUpperCase())){
+				Error.namingError("Cannot create a variable with a number as the name", lineNumber);
+			}
 
 			// RHS into like terms
 			if (parseRHS())

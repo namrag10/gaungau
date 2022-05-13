@@ -9,7 +9,6 @@ public class ifFunc extends FunctionWorkings {
 
     public ifFunc(int open, Condition condition){
         super(open, condition);
-        preBlock.add("Open If at: " + starting);
     }
 
     @Override

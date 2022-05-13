@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
-import Identify.asmGen;
+import Identify.logicGen;
 import Structures.Struc;
 import Syntax.codeControl;
 public class Condition extends Struc {
@@ -31,7 +31,9 @@ public class Condition extends Struc {
         condition = raw.substring(1, raw.indexOf(")"));
 
 
-        if (!tokenise()) return false;
+        if (!tokenise()) 
+            System.out.print("Yeet");
+        //return false;
         build();
 
 
@@ -46,53 +48,124 @@ public class Condition extends Struc {
         int count = 0;
         tokensList.add(new ArrayList < String > ());
         for (String token: tokens) {
+            tokensList.get(count).add(token);
             if (isOperatorKey(token)) {
                 count++;
                 tokensList.add(new ArrayList < String > ());
-            } else {
-                tokensList.get(count).add(token);
             }
         }
-
+        
+        
         for (ArrayList < String > tokenList: tokensList) {
-            String operatorInstrucHold = "";
+            ArrayList <ArrayList<String>> instructionsHold = new ArrayList <ArrayList<String>> ();
+            String operatorTokenHold = "";
+
+            String operatorKeyHold = "none";
+            
+            
             while (tokenList.size() > 0) {
-                String firstTerm = tokenList.remove(tokenList.size() -1);
+                // Current side of the operand (left or right of operand)
+                ArrayList<String> crntSideInstructions = new ArrayList<String>();
+                String firstTerm = tokenList.remove(0);
                 if (firstTerm.length() == 0) {
                     Error.syntaxError("No condition", lineNumber);
                     return false;
                 }
 
                 // Loading the first term
-                instructions.add(
+                crntSideInstructions.add(
                     codeControl.load(firstTerm)
                 );
 
                 // need to add logic to reverse the lhs and rhs without affecting eachother or operand
 
-                if(isOperand(tokenList.get(tokenList.size() -1))){
-                    operatorInstrucHold = tokenList.remove(tokenList.size() -1);
+                if(tokenList.size() > 0 && isOperand(tokenList.get(0))){
+                    operatorTokenHold = tokenList.remove(0);
+                    instructionsHold.add(crntSideInstructions);
                     continue;
                 }
                 // Add subsequent terms
                 while (tokenList.size() > 0) {
-                    String token = tokenList.remove(tokenList.size() -1);
+                    if(isOperatorKey(tokenList.get(0))){
+                        operatorKeyHold = tokenList.remove(0);
+                        continue;
+                    }
+
+                    String token = tokenList.remove(0);
                     if (isOperand(token)) {
-                        // operatorInstrucHold = asmGen.operandTranslate(token, ILine + instructionCount() + 1);
-                        operatorInstrucHold = token;
-                        instructions.add(codeControl.store("255"));
+                        // operatorInstrucHold = logicGen.operandTranslate(token, ILine + instructionCount() + 1);
+                        operatorTokenHold = token;
                         break;
                     } else
-                        instructions.add(asmGen.operatorTranslate(
+                        crntSideInstructions.add(logicGen.operatorTranslate(
                             extractOperands(token),
                             extractAfterOperands(token)));
                 }
+                if(instructionsHold.size() > 0)
+                    crntSideInstructions.add(codeControl.store(255));
+                instructionsHold.add(crntSideInstructions);
             }
-            instructions.add(asmGen.operandTranslate(operatorInstrucHold, ILine + instructionCount() + 1));
+
+            // Both sides are now built, and operand recorded
+            // Adds both sides, and the operator loop check
+            for (String instruc : instructionsHold.get(1))
+                instructions.add(instruc);
+            
+            for (String instruc : instructionsHold.get(0))
+                instructions.add(instruc);
+            
+            // Adds the subtract check - manditory for any check
+            instructions.add(codeControl.sub(255));
+            
+            String[] logicInstructs = logicGen.operandTranslate(
+                operatorTokenHold,
+                ILine + instructionCount(),
+                operatorKeyHold
+            ).split("#");
+
+            // Adds loop for type of operand
+            for(int i = 0; i < logicInstructs.length; i++)
+                instructions.add(logicInstructs[i]);
+
+            // above:
+            // or => should point to the block
+            // and => should point to skip the block (last line in the condition instructions)
+            // true => should + 2
+
+
+
+            // String operandInstruction = logicGen.operatorKeywordTranslate(
+            //     operatorKeyHold,
+            //     ILine + instructionCount(),
+            //     operatorKeyHold
+            // );
+
+            // if(operandInstruction != null)
+            //     instructions.add(operandInstruction);
         }
+        // change skip pointers
+        finalisePointers();
         return true;
     }
 
+
+    private void finalisePointers(){
+        String toBlock = instructions.get(instructions.size() -1);
+        toBlock = toBlock.substring(toBlock.indexOf(" ") +1);
+
+        for (int i = 0; i < instructions.size(); i++) {
+            if(instructions.get(i).indexOf(conditionPointerID) > -1){
+                String statement = instructions.get(i).substring(0, instructions.get(i).indexOf(" ") +1);
+
+                if(instructions.get(i).indexOf("true") > -1){
+                    instructions.set(i, statement + toBlock);
+                }else{
+                    instructions.set(i, statement + (ILine + instructionCount() + 1) + "\n");
+                }
+
+            }
+        }
+    }
 
 
     private boolean tokenise() {
@@ -104,13 +177,13 @@ public class Condition extends Struc {
         String temp = "";
         for (char t: condition.toCharArray()) {
             if (isOperandSingleChar(t + "")) {
-                if (!(temp.equals("")) && !(isOperandSingleChar(temp.substring(temp.length() - 1)))) {
+                if (!temp.equals("") && !isOperandSingleChar(temp.substring(temp.length() - 1))) {
                     tokens.add(temp);
                     temp = "";
                 }
             }
             temp += t;
-            if (isOperand(temp)) {
+            if (isOperand(temp) || isOperatorKey(temp)) {
                 tokens.add(temp);
                 temp = "";
             }

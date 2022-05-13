@@ -15,4 +15,8 @@ public interface SyntaxCfg {
 	String functionIdentifier = "()";
     String variableOperand = ":=";
 	String variableID = "&";
+
+
+	String conditionPointerID = "$";
+
 }

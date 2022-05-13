@@ -2,7 +2,7 @@ package Structures;
 
 import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
-import Identify.asmGen;
+import Identify.logicGen;
 import Structures.Meta.LineMeta;
 import Syntax.codeControl;
 
@@ -117,7 +117,7 @@ public class Variable extends Struc {
 
 		// Add subsequent terms
 		for (String token: tokens) {
-			instructions.add(asmGen.operatorTranslate(
+			instructions.add(logicGen.operatorTranslate(
 				extractOperands(token),
 				extractAfterOperands(token))
 			);

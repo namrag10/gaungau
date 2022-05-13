@@ -1,6 +1,4 @@
-yeet := 0 + 4 - 90
-
-if(yeet + 7 == yeet){
+if(7 == 1 || 1== 9){
     num := 9
     exit()
 }

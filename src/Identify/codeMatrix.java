@@ -26,6 +26,9 @@ public class codeMatrix {
         matrix.put("INC", 17);
         matrix.put("DEC", 18);
         matrix.put("JPF", 19);
+        matrix.put("LDB", 20);
+        matrix.put("&LDB", 21);
+        matrix.put("SAB", 22);
     }
 
     public int code(String command){

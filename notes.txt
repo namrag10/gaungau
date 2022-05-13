@@ -5,21 +5,39 @@ For flag instructions, flags 0 - 6 should be mapped to (10000000 -> 00000010) [(
 
 
 
-=== Blocks ===
+=== Operand Keywords ===
 
----
-$test = 2;
----
-
----
-if($test < 3){
-    $num = 5;
-
-    ---
-    while($num > 0){
-        $num = $num - 1;
-        NOP;
-    }
-    ---
+if(1 == 1 && 2 == 2){
+    #do
 }
----
+#else
+
+
+# AND
+&LDA 1
+STO 255
+&LDA 1
+SUB 255
+BRZ [Avoid skip]
+BRA [Skip Block]
+&LDA 2
+STO 255
+&LDA 2
+SUB 255
+BRZ [Avoid skip]
+BRA [Skip Block]
+<Block>
+<Else>
+
+# OR
+&LDA 1
+STO 255
+&LDA 1
+SUB 255
+BRZ [To Block]
+&LDA 2
+STO 255
+&LDA 2
+SUB 255
+BRZ [To Block]
+BRA [Skip Block]

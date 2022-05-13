@@ -14,6 +14,7 @@ public class ifFunc extends FunctionWorkings {
 
     @Override
     public void closeHandle(int close){
+        super.closeHandle(close);
         preBlock.add(codeControl.unconditionalBranch(close));
     }
 

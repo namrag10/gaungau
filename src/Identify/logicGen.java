@@ -1,5 +1,6 @@
 package Identify;
 
+import ErrorHandle.Error;
 import Syntax.codeControl;
 
 public class logicGen {
@@ -15,12 +16,12 @@ public class logicGen {
 		}
 	}
 
-	public static String operandTranslate(String operand, int param, String operandKey){
-		return operandTranslate(operand, Integer.toString(param), operandKey);
+	public static String comparatorTranslate(String comparator, int param, String comparatorKey){
+		return comparatorTranslate(comparator, Integer.toString(param), comparatorKey);
 	}
 
-	public static String operandTranslate(String operand, String param, String operandKey) {
-		switch (operandKey) {
+	public static String comparatorTranslate(String comparator, String param, String comparatorKey) {
+		switch (comparatorKey) {
 			case "&&":
 				String  branch = codeControl.unconditionalBranch("$false");
 				param = "#" + (Integer.parseInt(param) + 2) + "\n" + 
@@ -32,7 +33,7 @@ public class logicGen {
 			default:
 				param = "" + (Integer.parseInt(param) + 2);
 		}
-		switch (operand) {
+		switch (comparator) {
 			case "<":
 				return codeControl.carryBranch(param);
 			case ">":
@@ -43,15 +44,4 @@ public class logicGen {
 				return "";
 		}
 	}
-
-	// public static String operatorKeywordTranslate(String operandKey, int param) {
-	//     switch (operandKey) {
-	//         case "&&":
-	//             return codeControl.unconditionalBranch("$skip");
-	//         case "||":
-	//             return null;
-	//         default:
-	//             return null;
-	//     }
-	// }
 }

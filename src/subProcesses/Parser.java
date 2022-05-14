@@ -34,7 +34,7 @@ public class Parser {
 				i = -1;
 			} else if (index > -1)
 				lines.get(i).lineText = lineText.substring(0, index);
-
+// infinite loop!
 			int braceIndex = lineText.indexOf("}");
 			if (braceIndex > -1 && lineText.length() > 1) {
 				if(amountChars(lineText, '}') > 1)

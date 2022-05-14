@@ -8,5 +8,5 @@ public class exitFunc extends FunctionWorkings {
     public exitFunc(int openAt, Condition condition) {
         super(openAt, condition);
         preBlock.add(codeControl.halt());
-    }    
+    }
 }

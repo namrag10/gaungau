@@ -24,22 +24,25 @@ public class Condition extends Struc {
     @Override
     public boolean parse(int ILine) {
         this.ILine = ILine;
+        
         if (raw.indexOf(")") == -1) {
             Error.syntaxError("No close bracket on condition", lineNumber);
             return false;
         }
         condition = raw.substring(1, raw.indexOf(")"));
 
+        for (String bracket : braces) {
+            if(condition.indexOf(bracket) > -1){
+                Error.syntaxError("Embedding conditions not supported, remove brackets", lineNumber);
+                return false;
+            }
+        }
 
-        if (!tokenise()) 
-            System.out.print("Yeet");
-        //return false;
-        build();
-
-
-
-
-        return true;
+        if (tokenise())
+            return build();
+        
+        Error.syntaxError("Invalid condition syntax", lineNumber);
+        return false;
     }
 
 
@@ -54,18 +57,18 @@ public class Condition extends Struc {
                 tokensList.add(new ArrayList < String > ());
             }
         }
-        
-        
+
+
         for (ArrayList < String > tokenList: tokensList) {
-            ArrayList <ArrayList<String>> instructionsHold = new ArrayList <ArrayList<String>> ();
+            ArrayList < ArrayList < String >> instructionsHold = new ArrayList < ArrayList < String >> ();
             String operatorTokenHold = "";
 
             String operatorKeyHold = "none";
-            
-            
+
+
             while (tokenList.size() > 0) {
                 // Current side of the operand (left or right of operand)
-                ArrayList<String> crntSideInstructions = new ArrayList<String>();
+                ArrayList < String > crntSideInstructions = new ArrayList < String > ();
                 String firstTerm = tokenList.remove(0);
                 if (firstTerm.length() == 0) {
                     Error.syntaxError("No condition", lineNumber);
@@ -79,20 +82,20 @@ public class Condition extends Struc {
 
                 // need to add logic to reverse the lhs and rhs without affecting eachother or operand
 
-                if(tokenList.size() > 0 && isOperand(tokenList.get(0))){
+                if (tokenList.size() > 0 && isComparator(tokenList.get(0))) {
                     operatorTokenHold = tokenList.remove(0);
                     instructionsHold.add(crntSideInstructions);
                     continue;
                 }
                 // Add subsequent terms
                 while (tokenList.size() > 0) {
-                    if(isOperatorKey(tokenList.get(0))){
+                    if (isOperatorKey(tokenList.get(0))) {
                         operatorKeyHold = tokenList.remove(0);
                         continue;
                     }
 
                     String token = tokenList.remove(0);
-                    if (isOperand(token)) {
+                    if (isComparator(token)) {
                         // operatorInstrucHold = logicGen.operandTranslate(token, ILine + instructionCount() + 1);
                         operatorTokenHold = token;
                         break;
@@ -101,65 +104,54 @@ public class Condition extends Struc {
                             extractOperands(token),
                             extractAfterOperands(token)));
                 }
-                if(instructionsHold.size() > 0)
+                if (instructionsHold.size() > 0)
                     crntSideInstructions.add(codeControl.store(255));
                 instructionsHold.add(crntSideInstructions);
             }
 
             // Both sides are now built, and operand recorded
             // Adds both sides, and the operator loop check
-            for (String instruc : instructionsHold.get(1))
+            for (String instruc: instructionsHold.get(1))
                 instructions.add(instruc);
-            
-            for (String instruc : instructionsHold.get(0))
+
+            for (String instruc: instructionsHold.get(0))
                 instructions.add(instruc);
-            
+
             // Adds the subtract check - manditory for any check
             instructions.add(codeControl.sub(255));
-            
-            String[] logicInstructs = logicGen.operandTranslate(
+
+            String[] logicInstructs = logicGen.comparatorTranslate(
                 operatorTokenHold,
                 ILine + instructionCount(),
                 operatorKeyHold
             ).split("#");
 
+            if(logicInstructs[0].equals("")){
+                Error.syntaxError("Unsupported comparator used", lineNumber);
+                return false;
+            }
+
             // Adds loop for type of operand
-            for(int i = 0; i < logicInstructs.length; i++)
+            for (int i = 0; i < logicInstructs.length; i++)
                 instructions.add(logicInstructs[i]);
-
-            // above:
-            // or => should point to the block
-            // and => should point to skip the block (last line in the condition instructions)
-            // true => should + 2
-
-
-
-            // String operandInstruction = logicGen.operatorKeywordTranslate(
-            //     operatorKeyHold,
-            //     ILine + instructionCount(),
-            //     operatorKeyHold
-            // );
-
-            // if(operandInstruction != null)
-            //     instructions.add(operandInstruction);
         }
+
         // change skip pointers
         finalisePointers();
         return true;
     }
 
-
-    private void finalisePointers(){
-        String toBlock = instructions.get(instructions.size() -1);
-        toBlock = toBlock.substring(toBlock.indexOf(" ") +1);
+    private void finalisePointers() {
+        String toBlock = instructions.get(instructions.size() - 1);
+        toBlock = toBlock.substring(toBlock.indexOf(" ") + 1);
 
         for (int i = 0; i < instructions.size(); i++) {
-            if(instructions.get(i).indexOf(conditionPointerID) > -1){
-                String statement = instructions.get(i).substring(0, instructions.get(i).indexOf(" ") +1);
+            if (instructions.get(i).indexOf(conditionPointerID) > -1) {
+                String statement = instructions.get(i).substring(0, instructions.get(i).indexOf(" ") + 1);
 
-                if(instructions.get(i).indexOf("true") > -1){
+                if (instructions.get(i).indexOf("true") > -1) {
                     instructions.set(i, statement + toBlock);
-                }else{
+                } else {
                     instructions.set(i, statement + (ILine + instructionCount() + 1) + "\n");
                 }
 
@@ -167,30 +159,39 @@ public class Condition extends Struc {
         }
     }
 
-
     private boolean tokenise() {
         if (condition.indexOf(variableOperand) > -1) {
-            Error.syntaxError("Cannot include multiple defining syntax on one line!", lineNumber);
+            Error.syntaxError("Cannot include defining syntax in condition!", lineNumber);
             return false;
         }
 
         String temp = "";
         for (char t: condition.toCharArray()) {
-            if (isOperandSingleChar(t + "")) {
-                if (!temp.equals("") && !isOperandSingleChar(temp.substring(temp.length() - 1))) {
+            if (isSingleChar(t + "")) {
+                if (!temp.equals("") && !isSingleChar(temp.substring(temp.length() - 1))) {
+                    tokens.add(temp);
+                    temp = "";
+                }
+            }else{
+                if (isComparator(temp) || isOperatorKey(temp)) {
                     tokens.add(temp);
                     temp = "";
                 }
             }
             temp += t;
-            if (isOperand(temp) || isOperatorKey(temp)) {
-                tokens.add(temp);
-                temp = "";
-            }
         }
         tokens.add(temp);
 
-        return relateVariables();
+        // ===== Validation check ===== \\
+        boolean valid = false;
+        for (String token : tokens) 
+            for (String comparator : comparators) 
+                if(token.equals(comparator))
+                    valid = true;
+        
+        if(valid)
+            return relateVariables();
+        return false;
     }
 
     private boolean relateVariables() {
@@ -211,7 +212,7 @@ public class Condition extends Struc {
         return true;
     }
 
-    private boolean isOperandSingleChar(String term) {
+    private boolean isSingleChar(String term) {
         for (String symbol: singles)
             if (symbol.equals(term)) return true;
 
@@ -220,21 +221,19 @@ public class Condition extends Struc {
         return false;
     }
 
-    public boolean isOperand(String term) {
-        for (String symbol: operands)
+    public boolean isComparator(String term) {
+        for (String symbol: comparators)
             if (symbol.equals(term)) return true;
         return false;
     }
 
     public boolean isOperatorKey(String term) {
-        for (String symbol: operatorKeywords)
+        for (String symbol: comparatorKeys)
             if (symbol.equals(term)) return true;
         return false;
     }
 
-
     public String getRaw() {
         return raw;
     }
-
 }

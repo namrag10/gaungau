@@ -1,5 +1,7 @@
 package Structures;
 
+import java.util.ArrayList;
+
 import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
 import Identify.logicGen;
@@ -34,27 +36,8 @@ public class Variable extends Struc {
 			}
 			
 			// ===== Variable name validation =====
-			for (String keyword: keywords) {
-				if (lhs.equals(keyword)) {
-					Error.namingError("Cannot create a variable whose LHS is a keyword", lineNumber);
-					return false;
-				}
-			}
-			for (String operator: operators) {
-				if (lhs.indexOf(operator) > -1) {
-					Error.namingError("Cannot create a variable whose LHS contains an operator or operand", lineNumber);
-					return false;
-				}
-			}
-			for (String keyword: operatorKeywords) {
-				if (lhs.indexOf(keyword) > -1) {
-					Error.namingError("Cannot create a variable whose LHS contains an operator keyword", lineNumber);
-					return false;
-				}
-			}
-			if(lhs.toLowerCase().equals(lhs.toUpperCase())){
-				Error.namingError("Cannot create a variable with a number as the name", lineNumber);
-			}
+			if(!validateName())
+				return false;
 
 			// RHS into like terms
 			if (parseRHS())
@@ -89,6 +72,12 @@ public class Variable extends Struc {
 			Error.syntaxError("Cannot include multiple defining syntax on one line!", lineNumber);
 			return false;
 		}
+		
+		for (String keyword: concatArrs(new String[][]{singles, keywords, braces}))
+			if (rhs.indexOf(keyword) > -1) {
+				Error.syntaxError("invalid RHS", lineNumber);
+				return false;
+			}
 		String temp = "";
 		for (char t : rhs.toCharArray()) {
 			if (isOperator(t + "")) {
@@ -145,12 +134,41 @@ public class Variable extends Struc {
 			if (!value.toUpperCase().equals(value.toLowerCase())) {
 				addr = MemoryManager.has(value);
 				if (addr == -1) {
-					Error.syntaxError(value + " does not exist", lineNumber);
+					Error.syntaxError("'" + value + "' does not exist", lineNumber);
 					return false;
 				}
 				tokens.set(i, extractOperands(tokens.get(i)) + variableID + addr);
 			}
 		}
 		return true;
+	}
+
+	private boolean validateName(){
+		for (String keyword: concatArrs(new String[][]{
+				keywords,
+				operators,
+				singles}))
+
+			if (lhs.equals(keyword)) {
+				Error.namingError("Invalid LHS", lineNumber);
+				return false;
+			}
+		
+		
+		if(lhs.toLowerCase().equals(lhs.toUpperCase())){
+			Error.namingError("Cannot create a variable with a number as the name", lineNumber);
+			return false;
+		}
+		return true;
+	}
+
+	private String[] concatArrs(String[][] arrays){
+		ArrayList<String> ret = new ArrayList<String>();
+		for (String[] strings : arrays) {
+			for (String string : strings) {
+				ret.add(string);
+			}
+		}
+		return ret.toArray(new String[0]);
 	}
 }

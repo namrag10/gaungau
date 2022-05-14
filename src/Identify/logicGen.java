@@ -1,6 +1,5 @@
 package Identify;
 
-import ErrorHandle.Error;
 import Syntax.codeControl;
 
 public class logicGen {

@@ -3,5 +3,5 @@
 if(9 == 9){
     lol := 9
 }else{
-    poo := 0
+    lol := 8 
 }

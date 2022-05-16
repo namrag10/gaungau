@@ -34,13 +34,23 @@ public class Parser {
 				i = -1;
 			} else if (index > -1)
 				lines.get(i).lineText = lineText.substring(0, index);
-// infinite loop!
+
+			// === No comments from here === \\
+
 			int braceIndex = lineText.indexOf("}");
 			if (braceIndex > -1 && lineText.length() > 1) {
-				if(amountChars(lineText, '}') > 1)
-					braceIndex++;
-				lines.add(i + 1, new LineMeta(lineText.substring(braceIndex), -1));
-				lines.get(i).lineText = lineText.substring(0, braceIndex);
+				if(braceIndex == 0){
+					lines.add(i + 1, new LineMeta(lineText.substring(braceIndex+1),
+						lines.get(i).lineNumber));
+					lines.get(i).lineText = lineText.substring(braceIndex, 1);
+				}else{
+					lines.add(i + 1, new LineMeta(
+						lineText.substring(braceIndex), 
+						lines.get(i).lineNumber)
+					);
+					lines.get(i).lineText = lineText.substring(0, braceIndex);
+
+				}
 				i = -1;
 			}
 

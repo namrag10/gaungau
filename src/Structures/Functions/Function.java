@@ -28,13 +28,14 @@ public class Function extends Struc {
     public boolean parse(int crntILine){
         startingInstrucLine = crntILine;
         condition = new Condition(extractCondition(), lineNumber);
-        if(condition.getRaw() == null){
-            Error.syntaxError("No condition found", lineNumber);
-            return false;
-        }
+        
+        boolean requiresCondition = true;
         switch(getType()){
             case "if":
                 functionality = new ifFunc(startingInstrucLine, condition);
+                break;
+            case "else":
+                requiresCondition = false;
                 break;
             case "while":
                 functionality = new whileFunc(startingInstrucLine, condition);
@@ -46,6 +47,11 @@ public class Function extends Struc {
                 functionality = new CustomFunction(startingInstrucLine, condition);
                 System.out.println(raw + " NEW FUNCTION - noted by not implemented");
                 break;
+        }
+
+        if(requiresCondition && condition.getRaw() == null){
+            Error.syntaxError("No condition found", lineNumber);
+            return false;
         }
 
         if(!functionality.generateCondition())

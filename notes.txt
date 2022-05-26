@@ -8,9 +8,10 @@ For flag instructions, flags 0 - 6 should be mapped to (10000000 -> 00000010) [(
 === Operand Keywords ===
 
 if(1 == 1 && 2 == 2){
-    #do
+    do
+}else{
+    
 }
-#else
 
 
 # AND

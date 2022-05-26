@@ -11,96 +11,101 @@ import Structures.Meta.LineMeta;
 public class Function extends Struc {
 
 
-    public Condition condition;
-    public Stack<Struc> block = new Stack<Struc>();
-    private FunctionWorkings functionality;
-    public String raw;
-    public int lineNumber;
-    private int startingInstrucLine = 0;
-    // private struct type;
+	public Condition condition;
+	public Stack<Struc> block = new Stack<Struc>();
+	private builtinFunctionality functionality;
+	private int startingInstrucLine = 0;
+	public boolean hasElse = false;
+	public elseStatement elseStatement = null;
+	// private struct type;
 
-    public Function(LineMeta rawStatement){
-        raw = rawStatement.lineText;
-        lineNumber = rawStatement.lineNumber;
-    }
-    
-    @Override
-    public boolean parse(int crntILine){
-        startingInstrucLine = crntILine;
-        condition = new Condition(extractCondition(), lineNumber);
-        
-        boolean requiresCondition = true;
-        switch(getType()){
-            case "if":
-                functionality = new ifFunc(startingInstrucLine, condition);
-                break;
-            case "else":
-                requiresCondition = false;
-                break;
-            case "while":
-                functionality = new whileFunc(startingInstrucLine, condition);
-                break;
-            case "exit":
-                functionality = new exitFunc(startingInstrucLine, condition);
-                break;
-            default:
-                functionality = new CustomFunction(startingInstrucLine, condition);
-                System.out.println(raw + " NEW FUNCTION - noted by not implemented");
-                break;
-        }
+	public Function(LineMeta rawStatement){
+		raw = rawStatement.lineText;
+		lineNumber = rawStatement.lineNumber;
+	}
+	
+	@Override
+	public boolean parse(int crntILine){
+		startingInstrucLine = crntILine;
+		condition = new Condition(extractCondition(), lineNumber);
+		boolean requiresCondition = true;
 
-        if(requiresCondition && condition.getRaw() == null){
-            Error.syntaxError("No condition found", lineNumber);
-            return false;
-        }
+		switch(getType()){
+			case "if":
+				functionality = new ifFunc(startingInstrucLine, condition);
+				break;
+			case "while":
+				functionality = new whileFunc(startingInstrucLine, condition);
+				break;
+			case "exit":
+				functionality = new exitFunc(startingInstrucLine, condition);
+				break;
+			case "else":
+				requiresCondition = false; 
+				functionality = new elseStatement(startingInstrucLine);
+				break;
+			default:
+				functionality = new CustomFunction(startingInstrucLine, condition);
+				System.out.println(raw + " NEW FUNCTION - noted by not implemented");
+				break;
+		}
 
-        if(!functionality.generateCondition())
-            return false;
-        crntILine += functionality.preInstructionCount();
+		// Sort out the condition
+		if(requiresCondition){
+			if(condition.getRaw() == null){
+				Error.syntaxError("No condition found", lineNumber);
+				return false;
+			}
 
-        // Discover structures in block
-        // Hot recursion going on here
-        for (Struc structure : block) {
-            if(!structure.parse(crntILine))
-                return false;
-            crntILine += structure.instructionCount();
-        }
+			if(!functionality.generateCondition())
+				return false;
+		}
+		crntILine += functionality.preInstructionCount();
 
-        functionality.closeHandle(crntILine);
-        crntILine += functionality.postBlock.size();
-        instructionsInBlock += crntILine - startingInstrucLine;
-        return true;
-    }
+		// Discover structures in block
+		// Hot recursion going on here
+		for (Struc structure : block) {
+			if(!structure.parse(crntILine))
+				return false;
+			crntILine += structure.instructionCount();
+		}
 
-    public void addStatement(Struc line){
-        block.add(line);
-    }
+		functionality.closeHandle(crntILine);
+		crntILine += functionality.postBlock.size();
+		instructionsInBlock += crntILine - startingInstrucLine;
+		return true;
+	}
 
-    private String extractCondition(){
-        int bracketIndex = raw.indexOf("(");
-        return (bracketIndex > -1) ? raw.substring(bracketIndex) : null;
-    }
+	// Adds a statement to the block
+	public void addStatement(Struc line){
+		block.add(line);
+	}
 
-    private String getType(){
-        return raw.substring(0, raw.indexOf("("));
-    }
+	private String extractCondition(){
+		int bracketIndex = raw.indexOf("(");
+		return (bracketIndex > -1) ? raw.substring(bracketIndex) : null;
+	}
+
+	public void setElse(){
+		hasElse = true;
+	}
 
 
-    // Sexy polymorphism going on here
-    @Override
-    public ArrayList<String> buildAndGetInstructions(){
-        
-        for (String string : functionality.preBlock) 
-            instructions.add(string);
+	// Sexy polymorphism going on here
+	@Override
+	public ArrayList<String> buildAndGetInstructions(){
+		
+		for (String string : functionality.preBlock) 
+			instructions.add(string);
 
-        for (Struc structure : block)
-            for (String string : structure.buildAndGetInstructions()) {
-                instructions.add(string);
-            }
-        
-        for (String string : functionality.postBlock) 
-            instructions.add(string);
-        
-        return instructions;
-    }
+		for (Struc structure : block)
+			for (String string : structure.buildAndGetInstructions()) {
+				instructions.add(string);
+			}
+		
+		for (String string : functionality.postBlock) 
+			instructions.add(string);
+		
+		return instructions;
+	}
 }

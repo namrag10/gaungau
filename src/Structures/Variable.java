@@ -10,10 +10,8 @@ import Syntax.codeControl;
 
 public class Variable extends Struc {
 
-	public String raw;
 	public String lhs = "";
-	public String rhs;
-	public int lineNumber;
+	public String rhs = "";
 	//private int address = -1;
 	
 

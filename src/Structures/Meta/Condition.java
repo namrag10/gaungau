@@ -10,7 +10,6 @@ import Structures.Struc;
 import Syntax.codeControl;
 public class Condition extends Struc {
 
-    private String raw;
     private String condition = "";
     private ArrayList < ArrayList < String > > tokensList = new ArrayList < ArrayList < String > > ();
     private int ILine = 0;

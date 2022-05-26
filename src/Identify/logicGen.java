@@ -15,9 +15,11 @@ public class logicGen {
 		}
 	}
 
+	
 	public static String comparatorTranslate(String comparator, int param, String comparatorKey){
 		return comparatorTranslate(comparator, Integer.toString(param), comparatorKey);
 	}
+
 
 	public static String comparatorTranslate(String comparator, String param, String comparatorKey) {
 		switch (comparatorKey) {

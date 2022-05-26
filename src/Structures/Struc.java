@@ -56,4 +56,10 @@ public class Struc implements SyntaxCfg {
 		return name.substring(index);
 	}
 
+	public String getType(){
+		if(raw.indexOf("(") > -1)
+        	return raw.substring(0, raw.indexOf("("));
+		return raw.substring(0, raw.indexOf("{"));
+    }
+
 }

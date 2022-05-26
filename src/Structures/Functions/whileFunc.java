@@ -3,16 +3,16 @@ package Structures.Functions;
 import Structures.Meta.Condition;
 import Syntax.codeControl;
 
-public class whileFunc extends FunctionWorkings {
+public class whileFunc extends builtinFunctionality {
 
     public whileFunc(int openAt, Condition condition) {
         super(openAt, condition);
     }
 
     @Override
-    public void closeHandle(int close){
-        super.closeHandle(close);
-        preBlock.add(codeControl.unconditionalBranch(closing +1));
+    public void closeHandle(int closeILine){
+        super.closeHandle(closeILine);
+        preBlock.add(codeControl.unconditionalBranch(closingILine +1));
         postBlock.add(codeControl.unconditionalBranch(starting));
     }
 
@@ -24,11 +24,5 @@ public class whileFunc extends FunctionWorkings {
         return true;
     }
 
-    @Override
-    public int preInstructionCount(){
-        if(closed)
-            return preBlock.size();
-        return preBlock.size() +1;
-    }
     
 }

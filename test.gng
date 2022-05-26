@@ -1,7 +1,35 @@
 
-
 if(9 == 9){
     lol := 9
-}else{
-    lol := 8 
+    lmao :=9
 }
+else{
+    test := 89
+}
+
+while(1 == 1){
+    lol := 7
+}
+
+# === Condition === #
+# 0 &LDA 9
+# 1 STO 255
+# 2 &LDA 9
+# 3 &SUB 255
+
+# === Test === #
+# 4 BRZ 6       true
+# 5 BRA 8       false
+
+# === IF Block === #
+# 6 &LDA 9
+# 7 STO 0
+
+# 8 BRA 11
+
+# === ELSE Block === #
+# 9 &LDA 43
+# 10 STO 1
+
+# === Continue === #
+# 11 ...

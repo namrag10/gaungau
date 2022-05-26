@@ -3,7 +3,7 @@ package Structures.Functions;
 import Structures.Meta.Condition;
 
 // This is not yet implemnted on the hardware
-public class CustomFunction extends FunctionWorkings {
+public class CustomFunction extends builtinFunctionality {
 
     public CustomFunction(int open, Condition condition) {
         super(open, condition);

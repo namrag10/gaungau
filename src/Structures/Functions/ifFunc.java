@@ -3,8 +3,7 @@ package Structures.Functions;
 import Structures.Meta.Condition;
 import Syntax.codeControl;
 
-public class ifFunc extends FunctionWorkings {
-
+public class ifFunc extends builtinFunctionality {
 
 
     public ifFunc(int open, Condition condition){
@@ -25,11 +24,6 @@ public class ifFunc extends FunctionWorkings {
         return true;
     }
 
-    @Override
-    public int preInstructionCount(){
-        if(closed)
-            return preBlock.size();
-        return preBlock.size() +1;
-    }
+    
 
 }

@@ -5,24 +5,21 @@ import Syntax.codeControl;
 
 public class whileFunc extends builtinFunctionality {
 
-    public whileFunc(int openAt, Condition condition) {
-        super(openAt, condition);
+    public whileFunc(int IOpen, Condition condition) {
+        super(IOpen, condition);
     }
 
     @Override
     public void closeHandle(int closeILine){
         super.closeHandle(closeILine);
-        preBlock.add(codeControl.unconditionalBranch(closingILine +1));
-        postBlock.add(codeControl.unconditionalBranch(starting));
-    }
+        preBlock.add(codeControl.unconditionalBranch(closingILine + 1));
+        postBlock.add(codeControl.unconditionalBranch(IStarting));
+    }    
 
     @Override
-    public boolean generateCondition(){
-        if(!funcCondition.parse(starting))
-            return false;
-        preBlock = funcCondition.instructions;
-        return true;
+    public int preInstructionCount(){
+        if(closed)
+            return preBlock.size();
+        return preBlock.size() +1;
     }
-
-    
 }

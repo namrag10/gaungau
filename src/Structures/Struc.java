@@ -9,6 +9,7 @@ public class Struc implements SyntaxCfg {
     public int lineNumber;
     protected String raw;
     protected int instructionsInBlock = 0;
+	protected boolean hasElse;
 
     public ArrayList < String > instructions = new ArrayList < String > ();
     protected ArrayList < String > tokens = new ArrayList < String > ();
@@ -61,5 +62,9 @@ public class Struc implements SyntaxCfg {
         	return raw.substring(0, raw.indexOf("("));
 		return raw.substring(0, raw.indexOf("{"));
     }
+
+	public void setElse(){
+		hasElse = true;
+	}
 
 }

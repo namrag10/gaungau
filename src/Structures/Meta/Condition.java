@@ -32,7 +32,7 @@ public class Condition extends Struc {
 
         for (String bracket : braces) {
             if(condition.indexOf(bracket) > -1){
-                Error.syntaxError("Embedding conditions not supported, remove brackets", lineNumber);
+                Error.syntaxError("Embedding conditions not supported, remove additional brackets", lineNumber);
                 return false;
             }
         }
@@ -117,7 +117,7 @@ public class Condition extends Struc {
                 instructions.add(instruc);
 
             // Adds the subtract check - manditory for any check
-            instructions.add(codeControl.sub(255));
+            instructions.add(codeControl.sub("&255"));
 
             String[] logicInstructs = logicGen.comparatorTranslate(
                 operatorTokenHold,

@@ -61,6 +61,10 @@ public class codeControl implements SyntaxCfg{
         return "HLT\n";
     }
 
+    public static String print(){
+        return "OUT\n";
+    }
+
 
 
 

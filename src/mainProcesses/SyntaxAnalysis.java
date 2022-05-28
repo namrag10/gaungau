@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.Stack;
 
 import ErrorHandle.Error;
+import GarbageControl.FunctionManager;
 import Structures.*;
 import Structures.Functions.Function;
 import Structures.Meta.LineMeta;
@@ -20,7 +21,7 @@ public class SyntaxAnalysis implements SyntaxCfg {
 
 	Stack < Function > openFunctions = new Stack < Function > ();
 
-	public boolean errors = false;
+	private boolean errors = false;
 
 	public SyntaxAnalysis(String rawSource) {
 		Queue < LineMeta > statements = Parser.parse(rawSource); // Removes comments
@@ -33,6 +34,18 @@ public class SyntaxAnalysis implements SyntaxCfg {
 
 
 			boolean lineValid = true;
+
+			// ======= ELSE STATEMENT ======= \\
+			if (statementText.indexOf("else") > -1) {
+				if (topCommands.size() > 0 && !topCommands.get(topCommands.size() - 1).getType().equals("if")) {
+					Error.syntaxError("Invalid placment of else statement", lineMeta.lineNumber);
+					setError();
+					return;
+				} else
+					topCommands.get(topCommands.size() - 1).setElse();
+			}
+
+
 			// ======= VARIABLE ======= \\
 			if (statementText.indexOf(variableOperand) > -1) { // Identifies a variable based on the presence of ':='
 				if (openFunctions.size() > 0) {
@@ -40,7 +53,8 @@ public class SyntaxAnalysis implements SyntaxCfg {
 				} else
 					topCommands.add(new Variable(lineMeta));
 
-			// ======= CLOSE FUNCTION ======= \\
+
+				// ======= CLOSE FUNCTION ======= \\
 			} else if (statementText.indexOf("}") > -1) { // Identifies a close bracket to end a block
 				if (openFunctions.size() > 0) {
 					openFunctions.pop();
@@ -49,16 +63,10 @@ public class SyntaxAnalysis implements SyntaxCfg {
 					setError();
 				}
 
-			// ======= ELSE STATEMENT ======= \\
-			}else if (statementText.indexOf("else") > -1){
-				if(topCommands.size() > 0 && !topCommands.get(topCommands.size() -1).getType().equals("if")){
-					Error.syntaxError("Invalid placment of else statement", lineMeta.lineNumber);
-					setError();
-					return;					
-				}
-			// ======= POSSIBLE FUNCTION ======= \\
+
+				// ======= POSSIBLE FUNCTION ======= \\
 			} else { // Whatever is left is checked against keywords and a 'function' is created for it
-			 
+
 				// ======= CHECKS FOR KEYWORDS ======= \\
 				// todo - should not be able to create function while inside another block
 				int i = 0;
@@ -76,15 +84,19 @@ public class SyntaxAnalysis implements SyntaxCfg {
 
 				// line has NO keyword in it
 				if (i == keywords.length) { // The for loop condition failed, and no break was triggered (reaches end of condition)
-					Boolean hasFuncId = (statementText.indexOf(functionIdentifier) > -1);
-					if (hasFuncId) {
-						if (openFunctions.size() == 0) {
-							topCommands.add(new Function(lineMeta));
-							openFunctions.push((Function) topCommands.get(topCommands.size() - 1));
-						} else{
-							Error.syntaxError("Cannot create a function within another function", lineMeta.lineNumber);
-							setError();
-							return;
+					int funcIdLoc = statementText.indexOf(functionIdentifier);
+					if (funcIdLoc > -1) {
+						if (FunctionManager.has(statementText.substring(0, funcIdLoc)) > -1) {
+							if (openFunctions.size() == 0) {
+								topCommands.add(new Function(lineMeta));
+								openFunctions.push((Function) topCommands.get(topCommands.size() - 1));
+							} else {
+								Error.syntaxError("Cannot create a function within another function", lineMeta.lineNumber);
+								setError();
+								return;
+							}
+						}else{
+							Error.syntaxError("Undefined Function", lineMeta.lineNumber);
 						}
 					} else {
 						lineValid = false;
@@ -92,13 +104,14 @@ public class SyntaxAnalysis implements SyntaxCfg {
 				}
 			}
 
-
+			// ===== Catch an Error for this line ===== \\
 			if (!lineValid) {
 				Error.syntaxError("'" + statementText + "'", lineMeta.lineNumber);
 				setError();
 			}
 		}
 
+		// ===== Ensures all functions have a close bracket ===== \\
 		if (openFunctions.size() > 0) {
 			for (Function openFunc: openFunctions) {
 				Error.syntaxError("Missing '}' for function", openFunc.lineNumber);
@@ -106,12 +119,13 @@ public class SyntaxAnalysis implements SyntaxCfg {
 			setError();
 		}
 
-		// Parsing
+		// ===== Parsing ===== \\
 		if (!errors) {
-			for (int i = 0; i < topCommands.size(); i++) { // All the code at this point makes sense, but not necesserily correct
-				if (!setError(!topCommands.get(i).parse(instructionCount))) {
+			// All the code at this point makes sense, but not necesserily correct \\
+			for (int i = 0; i < topCommands.size(); i++) {
+				if (!setError(!topCommands.get(i).parse(instructionCount)))
 					instructionCount += topCommands.get(i).instructionCount();
-				}
+
 				if (errors) break;
 			}
 		}
@@ -132,6 +146,14 @@ public class SyntaxAnalysis implements SyntaxCfg {
 	public boolean setError(boolean state) {
 		if (state) errors = true;
 		return errors;
+	}
+
+	public boolean hasError() {
+		return errors;
+	}
+
+	public ArrayList < Struc > getCommands() {
+		return topCommands;
 	}
 
 }

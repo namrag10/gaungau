@@ -12,6 +12,4 @@ public class elseStatement extends builtinFunctionality {
         super.closeHandle(IClose);
         preBlock.add(codeControl.unconditionalBranch(IClose));
     }
-
-
 }

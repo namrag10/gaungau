@@ -6,24 +6,22 @@ import Syntax.codeControl;
 public class ifFunc extends builtinFunctionality {
 
 
-    public ifFunc(int open, Condition condition){
-        super(open, condition);
+    public ifFunc(int IOpen, Condition condition, boolean hasElse){
+        super(IOpen, condition, hasElse);
     }
 
     @Override
     public void closeHandle(int close){
         super.closeHandle(close);
+        if(elseAttached)
+            close++;
         preBlock.add(codeControl.unconditionalBranch(close));
     }
 
     @Override
-    public boolean generateCondition(){
-        if(!funcCondition.parse(starting))
-            return false;
-        preBlock = funcCondition.instructions;
-        return true;
+    public int preInstructionCount(){
+        if(closed)
+            return preBlock.size();
+        return preBlock.size() +1;
     }
-
-    
-
 }

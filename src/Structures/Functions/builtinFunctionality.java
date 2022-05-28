@@ -9,12 +9,18 @@ public class builtinFunctionality {
     protected ArrayList<String> postBlock = new ArrayList<String>();
     public Condition funcCondition;
     protected boolean closed = false;
+    protected boolean elseAttached = false;
 
-    protected int starting;
+    protected int IStarting;
     protected int closingILine;
 
-    public builtinFunctionality(int open, Condition condition){
-        starting = open;
+    public builtinFunctionality(int IOpen, Condition condition, boolean hasElse){
+        this(IOpen, condition);
+        elseAttached = hasElse;
+    }
+
+    public builtinFunctionality(int IOpen, Condition condition){
+        IStarting = IOpen;
         funcCondition = condition;
     }
 
@@ -24,12 +30,13 @@ public class builtinFunctionality {
     }
 
     public boolean generateCondition(){
+        if(!funcCondition.parse(IStarting))
+            return false;
+        preBlock = funcCondition.instructions;
         return true;
     }
 
     public int preInstructionCount(){
-        if(closed)
-            return preBlock.size();
-        return preBlock.size() +1;
+        return preBlock.size();
     }
 }

@@ -14,12 +14,13 @@ public class CodeGen {
 	public CodeGen(SyntaxAnalysis codeBase) {
 		codeTree = codeBase;
 
+		// Clears the output file
 		try {
 			FileWriter myWriter = new FileWriter("output.asm");
 			myWriter.write("");
 			myWriter.close();
 		} catch (IOException e) {
-			System.out.println("An error occurred.");
+			System.out.println("Could not write to output");
 			e.printStackTrace();
 		}
 	}

@@ -32,6 +32,7 @@ public class Parser {
 			if (index == 0) {
 				lines.remove(i);
 				i = -1;
+				continue;
 			} else if (index > -1)
 				lines.get(i).lineText = lineText.substring(0, index);
 

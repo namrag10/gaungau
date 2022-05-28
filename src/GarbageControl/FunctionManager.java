@@ -5,7 +5,6 @@ import java.util.HashMap;
 // Doesnt yet handle overflows i.e. addresses over 255
 public class FunctionManager {
     
-    private static int memoryHolder = 0;
     
 
     private static HashMap<String, Integer> functions = new HashMap<String, Integer>();
@@ -17,18 +16,17 @@ public class FunctionManager {
         return -1;
     }
 
-    public static boolean newFunction(String name){
+    public static boolean newFunction(String name, int ILineOpen){
         if(functions.containsKey(name))
             return false;
         
-        functions.put(name, memoryHolder);
+        functions.put(name, ILineOpen);
 
-        memoryHolder++;
         return true;
         
     }
 
-    public static Integer getAddress(String varName){
-        return functions.get(varName);
+    public static int getILine(String funcName){
+        return functions.get(funcName);
     }
 }

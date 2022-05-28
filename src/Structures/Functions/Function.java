@@ -14,9 +14,7 @@ public class Function extends Struc {
 	public Condition condition;
 	public Stack<Struc> block = new Stack<Struc>();
 	private builtinFunctionality functionality;
-	private int startingInstrucLine = 0;
-	public boolean hasElse = false;
-	public elseStatement elseStatement = null;
+	private int startingILine = 0;
 	// private struct type;
 
 	public Function(LineMeta rawStatement){
@@ -26,31 +24,37 @@ public class Function extends Struc {
 	
 	@Override
 	public boolean parse(int crntILine){
-		startingInstrucLine = crntILine;
+		startingILine = crntILine;
 		condition = new Condition(extractCondition(), lineNumber);
 		boolean requiresCondition = true;
 
 		switch(getType()){
 			case "if":
-				functionality = new ifFunc(startingInstrucLine, condition);
+				functionality = new ifFunc(startingILine, condition, hasElse);
 				break;
 			case "while":
-				functionality = new whileFunc(startingInstrucLine, condition);
+				functionality = new whileFunc(startingILine, condition);
 				break;
 			case "exit":
-				functionality = new exitFunc(startingInstrucLine, condition);
+				requiresCondition = false;
+				functionality = new exitFunc(startingILine, condition);
+				break;
+			case "print":
+				requiresCondition = false;
+				functionality = new printFunc(startingILine, condition);
 				break;
 			case "else":
 				requiresCondition = false; 
-				functionality = new elseStatement(startingInstrucLine);
+				functionality = new elseStatement(startingILine);
 				break;
 			default:
-				functionality = new CustomFunction(startingInstrucLine, condition);
-				System.out.println(raw + " NEW FUNCTION - noted by not implemented");
+				requiresCondition = false;
+				functionality = new CustomFunction(startingILine, condition);
+				System.out.println(raw + " NEW FUNCTION - noted but not implemented");
 				break;
 		}
 
-		// Sort out the condition
+		// Sort out the condition if needed
 		if(requiresCondition){
 			if(condition.getRaw() == null){
 				Error.syntaxError("No condition found", lineNumber);
@@ -72,7 +76,7 @@ public class Function extends Struc {
 
 		functionality.closeHandle(crntILine);
 		crntILine += functionality.postBlock.size();
-		instructionsInBlock += crntILine - startingInstrucLine;
+		instructionsInBlock += crntILine - startingILine;
 		return true;
 	}
 
@@ -86,10 +90,6 @@ public class Function extends Struc {
 		return (bracketIndex > -1) ? raw.substring(bracketIndex) : null;
 	}
 
-	public void setElse(){
-		hasElse = true;
-	}
-
 
 	// Sexy polymorphism going on here
 	@Override
@@ -98,10 +98,11 @@ public class Function extends Struc {
 		for (String string : functionality.preBlock) 
 			instructions.add(string);
 
+
 		for (Struc structure : block)
-			for (String string : structure.buildAndGetInstructions()) {
+			for (String string : structure.buildAndGetInstructions())
 				instructions.add(string);
-			}
+			
 		
 		for (String string : functionality.postBlock) 
 			instructions.add(string);

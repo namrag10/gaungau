@@ -38,6 +38,7 @@ public class Parser {
 
 			// === No comments from here === \\
 
+			// === Sorting out multiple close braces on one line === \\
 			int braceIndex = lineText.indexOf("}");
 			if (braceIndex > -1 && lineText.length() > 1) {
 				if(braceIndex == 0){
@@ -55,6 +56,8 @@ public class Parser {
 				i = -1;
 			}
 
+
+			// === Removes a blank line === \\
 			if (lineText.equals("")) {
 				lines.remove(i);
 				i = -1;
@@ -63,16 +66,5 @@ public class Parser {
 		Queue<LineMeta> ret = new LinkedList<LineMeta>(lines);
 
 		return ret;
-	}
-	private static int amountChars(String inpString, char inpChar) {
-	
-		int totalCharacters = 0;
-		char temp;
-		for (int i = 0; i < inpString.length(); i++) {
-			temp = inpString.charAt(i);
-			if (temp == inpChar)
-				totalCharacters++;
-		}
-		return totalCharacters;
 	}
 }

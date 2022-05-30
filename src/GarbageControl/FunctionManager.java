@@ -9,21 +9,25 @@ public class FunctionManager {
 
     private static HashMap<String, Integer> functions = new HashMap<String, Integer>();
 
-    public static int has(String funcName){
+    public static boolean has(String funcName){
         if(functions.containsKey(funcName)){
-            return functions.get(funcName);
+            return true;
         }
-        return -1;
+        return false;
     }
 
-    public static boolean newFunction(String name, int ILineOpen){
+    public static boolean newFunction(String name){
         if(functions.containsKey(name))
             return false;
         
-        functions.put(name, ILineOpen);
+        functions.put(name, -1);
 
         return true;
         
+    }
+
+    public static void updateFunction(String name, int ILineOpen){
+        functions.replace(name, ILineOpen);
     }
 
     public static int getILine(String funcName){

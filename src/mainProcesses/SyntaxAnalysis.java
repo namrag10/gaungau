@@ -86,17 +86,20 @@ public class SyntaxAnalysis implements SyntaxCfg {
 				if (i == keywords.length) { // The for loop condition failed, and no break was triggered (reaches end of condition)
 					int funcIdLoc = statementText.indexOf(functionIdentifier);
 					if (funcIdLoc > -1) {
-						if (FunctionManager.has(statementText.substring(0, funcIdLoc)) > -1) {
+						if (FunctionManager.has(statementText.substring(0, funcIdLoc))) {
+							System.out.println("calling!");
+						}else{
 							if (openFunctions.size() == 0) {
 								topCommands.add(new Function(lineMeta));
 								openFunctions.push((Function) topCommands.get(topCommands.size() - 1));
+								System.out.println(lineMeta.lineText);
+								
+								// FunctionManager.newFunction()
 							} else {
 								Error.syntaxError("Cannot create a function within another function", lineMeta.lineNumber);
 								setError();
 								return;
 							}
-						}else{
-							Error.syntaxError("Undefined Function", lineMeta.lineNumber);
 						}
 					} else {
 						lineValid = false;

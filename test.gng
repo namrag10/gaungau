@@ -6,10 +6,7 @@ if(1 == 1)
 #num := 0
 #count := 0
 
-#while(num < 10){
-#    num := num + 2
-#    count := count + 1
-
-#    print()
-#}
-
+while(num < 10)
+    num := num + 2
+    count := count + 1
+    print()

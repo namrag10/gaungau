@@ -155,10 +155,8 @@ public class SyntaxAnalysis implements SyntaxCfg {
 
 	private boolean funcWordStartEquals(String raw, String key){
 		int openIndex = raw.indexOf("(");
-		if(openIndex == -1){
-			setError();
+		if(openIndex == -1)
 			return false;
-		} 
 		return (raw.substring(0, openIndex).equals(key));
 	}
 

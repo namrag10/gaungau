@@ -54,6 +54,25 @@ public class Parser {
 
 				}
 				i = -1;
+				continue;
+			}
+
+			braceIndex = lineText.indexOf("{");
+			if (braceIndex > -1 && lineText.length() > 1) {
+				if(braceIndex == 0){
+					lines.add(i + 1, new LineMeta(lineText.substring(braceIndex+1),
+						lines.get(i).lineNumber));
+					lines.get(i).lineText = lineText.substring(braceIndex, 1);
+				}else{
+					lines.add(i + 1, new LineMeta(
+						lineText.substring(braceIndex), 
+						lines.get(i).lineNumber)
+					);
+					lines.get(i).lineText = lineText.substring(0, braceIndex);
+
+				}
+				i = -1;
+				continue;
 			}
 
 

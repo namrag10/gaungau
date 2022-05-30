@@ -47,6 +47,9 @@ public class Function extends Struc {
 				requiresCondition = false; 
 				functionality = new elseStatement(startingILine);
 				break;
+			case "NOOPENBRACKET":
+				Error.syntaxError("No open bracket on condition", lineNumber);
+				return false;
 			default:
 				requiresCondition = false;
 				functionality = new CustomFunction(startingILine, condition);

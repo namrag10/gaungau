@@ -58,7 +58,9 @@ public class Struc implements SyntaxCfg {
 	}
 
 	public String getType(){
-		if(raw.indexOf("(") > -1)
+		int openIndex = raw.indexOf("(");
+		if(openIndex == -1) return "NOOPENBRACKET";
+		if(openIndex > -1)
         	return raw.substring(0, raw.indexOf("("));
 		return raw.substring(0, raw.indexOf("{"));
     }

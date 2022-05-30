@@ -17,8 +17,8 @@
             "name": "Launch App",
             "request": "launch",
             "mainClass": "App",
-            "projectName": "Interpreter_896586f3",
-            // "projectName": "gaungau_72b3e393",
+            //"projectName": "Interpreter_896586f3",
+            "projectName": "gaungau_72b3e393",
             "args": ["test"]
         }
     ]

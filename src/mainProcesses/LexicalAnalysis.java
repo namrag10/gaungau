@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import GarbageControl.output;
 import Structures.Meta.LineMeta;
 
 public class LexicalAnalysis implements main{

@@ -6,7 +6,6 @@ import java.util.Stack;
 
 import ErrorHandle.Error;
 import GarbageControl.FunctionManager;
-import GarbageControl.output;
 import Structures.*;
 import Structures.Functions.Function;
 import Structures.Meta.LineMeta;

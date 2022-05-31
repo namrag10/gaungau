@@ -6,8 +6,6 @@
             "lib/**/*.jar"
         ],
         "exclude": [
-            "lib/commons-lang3-3.12.0.jar",
-            ""
         ]
     }
 }

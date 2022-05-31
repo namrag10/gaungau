@@ -14,13 +14,13 @@ public class CodeGen {
 	public CodeGen(String outputFile) {
 		filePath = outputFile;
 
-		// Clears the output file
+		// === Clears the output file === \\
 		try {
 			FileWriter myWriter = new FileWriter(filePath);
 			myWriter.write("");
 			myWriter.close();
 		} catch (IOException e) {
-			System.out.println("Could not write to output");
+			System.out.println("Could not write to file!");
 			e.printStackTrace();
 		}
 	}
@@ -29,14 +29,13 @@ public class CodeGen {
 		ArrayList < Struc > code = syntaxAnalysis.getFullCode();
 
 		for (Struc structure: code) {
-			for(String instruction : structure.buildAndGetInstructions()){
-				if(!append(instruction)){
+			for (String instruction: structure.buildAndGetInstructions()) {
+				if (!append(instruction)) {
 					Error.customError("Could not write to file!");
 					return false;
 				}
 			}
 		}
-		System.out.println("GNG Success! Written to file output.asm");
 		return true;
 	}
 
@@ -47,7 +46,7 @@ public class CodeGen {
 			myWriter.close();
 			return true;
 		} catch (IOException e) {
-			System.out.println("An error occurred.");
+			System.out.println("Could not write to file!");
 			return false;
 		}
 	}

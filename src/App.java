@@ -3,10 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import ErrorHandle.Error;
-import GarbageControl.output;
-import mainProcesses.CodeGen;
-import mainProcesses.LexicalAnalysis;
-import mainProcesses.SyntaxAnalysis;
+import mainProcesses.*;
 
 public class App {
 	public static void main(String[] args) throws Exception {
@@ -37,7 +34,7 @@ public class App {
 		LexicalAnalysis lex = new LexicalAnalysis(txtScript);
 
 		SyntaxAnalysis syn = new SyntaxAnalysis(lex);
-		output yeet = syn.view();
+		
 
 		if(!syn.hasError()){
 			CodeGen Gen = new CodeGen("output.asm");

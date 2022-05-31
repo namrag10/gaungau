@@ -1,4 +1,4 @@
-package GarbageControl;
+package mainProcesses;
 
 import java.util.ArrayList;
 import java.util.Queue;

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import ErrorHandle.Error;
-import Structures.*;
+import Structures.Meta.Struc;
 
 public class CodeGen {
 

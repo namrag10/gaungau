@@ -2,7 +2,7 @@ package GarbageControl;
 
 import java.util.HashMap;
 
-// Doesnt yet handle overflows i.e. addresses over 255
+// TODO Doesnt yet handle overflows i.e. addresses over 255
 public class MemoryManager {
     
     private static int memoryHolder = 0;

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
 import Identify.logicGen;
-import Structures.Struc;
 import Syntax.SyntaxCfg;
 import Syntax.codeControl;
 public class Condition extends Struc {

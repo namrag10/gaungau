@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import ErrorHandle.Error;
-import Structures.Struc;
 import Structures.Meta.Condition;
 import Structures.Meta.LineMeta;
+import Structures.Meta.Struc;
 
 public class Function extends Struc {
 

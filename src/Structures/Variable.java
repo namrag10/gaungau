@@ -6,6 +6,7 @@ import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
 import Identify.logicGen;
 import Structures.Meta.LineMeta;
+import Structures.Meta.Struc;
 import Syntax.SyntaxCfg;
 import Syntax.codeControl;
 

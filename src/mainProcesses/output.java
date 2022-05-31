@@ -3,8 +3,8 @@ package mainProcesses;
 import java.util.ArrayList;
 import java.util.Queue;
 
-import Structures.Struc;
 import Structures.Meta.LineMeta;
+import Structures.Meta.Struc;
 
 public class output {
 

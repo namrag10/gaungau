@@ -9,6 +9,7 @@ import GarbageControl.FunctionManager;
 import Structures.*;
 import Structures.Functions.Function;
 import Structures.Meta.LineMeta;
+import Structures.Meta.Struc;
 import Syntax.SyntaxCfg;
 
 public class SyntaxAnalysis implements main {

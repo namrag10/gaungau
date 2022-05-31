@@ -1,30 +1,27 @@
-package subProcesses;
+package mainProcesses;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import GarbageControl.output;
 import Structures.Meta.LineMeta;
 
-public class Parser {
+public class LexicalAnalysis implements main{
 
-	public static Queue < LineMeta > parse(String statements) {
+	private Queue<LineMeta> lexStack;
 
-		statements = statements.replace(" ", "");
-		statements = statements.replace("\n", ";");
+	public LexicalAnalysis(String rawStatements) {
 
-		ArrayList < String > raw = new ArrayList < String > (Arrays.asList(statements.split(";")));
+		rawStatements = rawStatements.replace(" ", "");
+		rawStatements = rawStatements.replace("\n", ";");
 
+		ArrayList < String > raw = new ArrayList < String > (Arrays.asList(rawStatements.split(";")));
+		ArrayList < LineMeta > lines = new ArrayList < LineMeta > ();
 
-
-		ArrayList<LineMeta> lines = new ArrayList<LineMeta>();
-
-		for(int i = 0; i < raw.size(); i++)
-			lines.add(new LineMeta(raw.get(i), i +1));
-
-
-
+		for (int i = 0; i < raw.size(); i++)
+			lines.add(new LineMeta(raw.get(i), i + 1));
 
 		for (int i = 0; i < lines.size(); i++) {
 			String lineText = lines.get(i).lineText;
@@ -41,15 +38,14 @@ public class Parser {
 			// === Sorting out multiple close braces on one line === \\
 			int braceIndex = lineText.indexOf("}");
 			if (braceIndex > -1 && lineText.length() > 1) {
-				if(braceIndex == 0){
-					lines.add(i + 1, new LineMeta(lineText.substring(braceIndex+1),
+				if (braceIndex == 0) {
+					lines.add(i + 1, new LineMeta(lineText.substring(braceIndex + 1),
 						lines.get(i).lineNumber));
 					lines.get(i).lineText = lineText.substring(braceIndex, 1);
-				}else{
+				} else {
 					lines.add(i + 1, new LineMeta(
-						lineText.substring(braceIndex), 
-						lines.get(i).lineNumber)
-					);
+						lineText.substring(braceIndex),
+						lines.get(i).lineNumber));
 					lines.get(i).lineText = lineText.substring(0, braceIndex);
 
 				}
@@ -59,15 +55,14 @@ public class Parser {
 
 			braceIndex = lineText.indexOf("{");
 			if (braceIndex > -1 && lineText.length() > 1) {
-				if(braceIndex == 0){
-					lines.add(i + 1, new LineMeta(lineText.substring(braceIndex+1),
+				if (braceIndex == 0) {
+					lines.add(i + 1, new LineMeta(lineText.substring(braceIndex + 1),
 						lines.get(i).lineNumber));
 					lines.get(i).lineText = lineText.substring(braceIndex, 1);
-				}else{
+				} else {
 					lines.add(i + 1, new LineMeta(
-						lineText.substring(braceIndex), 
-						lines.get(i).lineNumber)
-					);
+						lineText.substring(braceIndex),
+						lines.get(i).lineNumber));
 					lines.get(i).lineText = lineText.substring(0, braceIndex);
 
 				}
@@ -82,8 +77,15 @@ public class Parser {
 				i = -1;
 			}
 		}
-		Queue<LineMeta> ret = new LinkedList<LineMeta>(lines);
 
-		return ret;
+		lexStack = new LinkedList < LineMeta > (lines);
+	}
+
+	public Queue<LineMeta> getStatements(){
+		return lexStack;
+	}
+
+	public output view(){
+		return new output(lexStack);
 	}
 }

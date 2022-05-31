@@ -6,13 +6,13 @@ import java.util.Stack;
 
 import ErrorHandle.Error;
 import GarbageControl.FunctionManager;
+import GarbageControl.output;
 import Structures.*;
 import Structures.Functions.Function;
 import Structures.Meta.LineMeta;
 import Syntax.SyntaxCfg;
-import subProcesses.Parser;
 
-public class SyntaxAnalysis implements SyntaxCfg {
+public class SyntaxAnalysis implements main {
 
 
 	private int instructionCount = 0;
@@ -23,8 +23,8 @@ public class SyntaxAnalysis implements SyntaxCfg {
 	private boolean errors = false;
 
 
-	public SyntaxAnalysis(String rawSource) {
-		Queue < LineMeta > statements = Parser.parse(rawSource); // Removes comments
+	public SyntaxAnalysis(LexicalAnalysis lex) {
+		Queue < LineMeta > statements = lex.getStatements(); // Removes comments
 		boolean fromFunction = false;
 
 		while (statements.size() > 0) { // Loops through each statement (;)
@@ -47,7 +47,7 @@ public class SyntaxAnalysis implements SyntaxCfg {
 
 
 			// ======= VARIABLE ======= \\
-			if (statementText.indexOf(variableOperand) > -1) { // Identifies a variable based on the presence of ':='
+			if (statementText.indexOf(SyntaxCfg.variableOperand) > -1) { // Identifies a variable based on the presence of ':='
 				if (openFunctions.size() > 0) {
 					openFuncAddStatement(new Variable(lineMeta), fromFunction);
 				} else
@@ -79,8 +79,8 @@ public class SyntaxAnalysis implements SyntaxCfg {
 
 				// ======= CHECKS FOR KEYWORDS ======= \\
 				int i = 0;
-				for (i = 0; i < keywords.length; i++) // Checks against keywords
-					if (funcWordStartEquals(statementText, keywords[i])) {
+				for (i = 0; i < SyntaxCfg.keywords.length; i++) // Checks against keywords
+					if (funcWordStartEquals(statementText, SyntaxCfg.keywords[i])) {
 						if (openFunctions.size() == 0) {
 							topCommands.add(new Function(lineMeta));
 							openFunctions.push((Function) topCommands.get(topCommands.size() - 1));
@@ -94,15 +94,15 @@ public class SyntaxAnalysis implements SyntaxCfg {
 					}
 
 				// line has NO keyword in it
-				if (i == keywords.length) { // The for loop condition failed, and no break was triggered (reaches end of condition)
-					int funcIdLoc = statementText.indexOf(functionIdentifier);
+				if (i == SyntaxCfg.keywords.length) { // The for loop condition failed, and no break was triggered (reaches end of condition)
+					int funcIdLoc = statementText.indexOf(SyntaxCfg.functionIdentifier);
 					if (funcIdLoc > -1) {
 
-						for (i = 0; i < callables.length; i++)
-							if(funcWordStartEquals(statementText, callables[i]))
+						for (i = 0; i < SyntaxCfg.callables.length; i++)
+							if(funcWordStartEquals(statementText, SyntaxCfg.callables[i]))
 								break;
 
-						if (i < callables.length || FunctionManager.has(statementText)) {
+						if (i < SyntaxCfg.callables.length || FunctionManager.has(statementText)) {
 							if (openFunctions.size() == 0) {
 								topCommands.add(new Function(lineMeta));								
 							} else {
@@ -153,6 +153,7 @@ public class SyntaxAnalysis implements SyntaxCfg {
 		}
 	}
 
+	
 	private boolean funcWordStartEquals(String raw, String key){
 		int openIndex = raw.indexOf("(");
 		if(openIndex == -1)
@@ -166,11 +167,6 @@ public class SyntaxAnalysis implements SyntaxCfg {
 			openFunctions.pop();
 	}
 
-	public Struc popStructure() {
-		return topCommands.remove(0);
-	}
-
-
 	public ArrayList < Struc > getFullCode() {
 		return topCommands;
 	}
@@ -183,12 +179,15 @@ public class SyntaxAnalysis implements SyntaxCfg {
 		return errors;
 	}
 
+
+
+
 	public boolean hasError() {
 		return errors;
 	}
 
-	public ArrayList < Struc > getCommands() {
-		return topCommands;
+	public output view() {
+		return new output(topCommands);
 	}
 
 }

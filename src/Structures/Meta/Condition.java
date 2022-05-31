@@ -7,6 +7,7 @@ import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
 import Identify.logicGen;
 import Structures.Struc;
+import Syntax.SyntaxCfg;
 import Syntax.codeControl;
 public class Condition extends Struc {
 
@@ -30,7 +31,7 @@ public class Condition extends Struc {
         }
         condition = raw.substring(1, raw.indexOf(")"));
 
-        for (String bracket : braces) {
+        for (String bracket : SyntaxCfg.braces) {
             if(condition.indexOf(bracket) > -1){
                 Error.syntaxError("Embedding conditions not supported, remove additional brackets", lineNumber);
                 return false;
@@ -145,7 +146,7 @@ public class Condition extends Struc {
         toBlock = toBlock.substring(toBlock.indexOf(" ") + 1);
 
         for (int i = 0; i < instructions.size(); i++) {
-            if (instructions.get(i).indexOf(conditionPointerID) > -1) {
+            if (instructions.get(i).indexOf(SyntaxCfg.conditionPointerID) > -1) {
                 String statement = instructions.get(i).substring(0, instructions.get(i).indexOf(" ") + 1);
 
                 if (instructions.get(i).indexOf("true") > -1) {
@@ -159,7 +160,7 @@ public class Condition extends Struc {
     }
 
     private boolean tokenise() {
-        if (condition.indexOf(variableOperand) > -1) {
+        if (condition.indexOf(SyntaxCfg.variableOperand) > -1) {
             Error.syntaxError("Cannot include defining syntax in condition!", lineNumber);
             return false;
         }
@@ -184,7 +185,7 @@ public class Condition extends Struc {
         // ===== Validation check ===== \\
         boolean valid = false;
         for (String token : tokens) 
-            for (String comparator : comparators) 
+            for (String comparator : SyntaxCfg.comparators) 
                 if(token.equals(comparator))
                     valid = true;
         
@@ -205,29 +206,29 @@ public class Condition extends Struc {
                     Error.syntaxError("Variable: " + value + " does not exist", lineNumber);
                     return false;
                 }
-                tokens.set(i, variableID + addr + "");
+                tokens.set(i, SyntaxCfg.variableID + addr + "");
             }
         }
         return true;
     }
 
     private boolean isSingleChar(String term) {
-        for (String symbol: singles)
+        for (String symbol: SyntaxCfg.singles)
             if (symbol.equals(term)) return true;
 
-        for (String symbol: operators)
+        for (String symbol: SyntaxCfg.operators)
             if (symbol.equals(term)) return true;
         return false;
     }
 
     public boolean isComparator(String term) {
-        for (String symbol: comparators)
+        for (String symbol: SyntaxCfg.comparators)
             if (symbol.equals(term)) return true;
         return false;
     }
 
     public boolean isOperatorKey(String term) {
-        for (String symbol: comparatorKeys)
+        for (String symbol: SyntaxCfg.comparatorKeys)
             if (symbol.equals(term)) return true;
         return false;
     }

@@ -6,6 +6,7 @@ import ErrorHandle.Error;
 import GarbageControl.MemoryManager;
 import Identify.logicGen;
 import Structures.Meta.LineMeta;
+import Syntax.SyntaxCfg;
 import Syntax.codeControl;
 
 public class Variable extends Struc {
@@ -26,8 +27,8 @@ public class Variable extends Struc {
 		boolean valid = false;
 		try {
 			// Gets the left and right basic strings based on variable identifier
-			rhs = raw.substring(raw.indexOf(variableOperand) + 2);
-			lhs = raw.substring(0, raw.indexOf(variableOperand));
+			rhs = raw.substring(raw.indexOf(SyntaxCfg.variableOperand) + 2);
+			lhs = raw.substring(0, raw.indexOf(SyntaxCfg.variableOperand));
 			if (lhs.length() == 0) {
 				Error.namingError("No name", lineNumber);
 				return false;
@@ -66,12 +67,12 @@ public class Variable extends Struc {
 
 	// Collects the like terms
 	public boolean parseRHS() {
-		if(rhs.indexOf(variableOperand) > -1) {
+		if(rhs.indexOf(SyntaxCfg.variableOperand) > -1) {
 			Error.syntaxError("Cannot include multiple defining syntax on one line!", lineNumber);
 			return false;
 		}
 		
-		for (String keyword: concatArrs(new String[][]{singles, keywords, braces}))
+		for (String keyword: concatArrs(new String[][]{SyntaxCfg.singles, SyntaxCfg.keywords, SyntaxCfg.braces}))
 			if (rhs.indexOf(keyword) > -1) {
 				Error.syntaxError("invalid RHS", lineNumber);
 				return false;
@@ -117,7 +118,7 @@ public class Variable extends Struc {
 	}
 
 	public boolean isPointer(String name) {
-		return (name.indexOf(variableID) > -1);
+		return (name.indexOf(SyntaxCfg.variableID) > -1);
 	}
 
 
@@ -135,7 +136,7 @@ public class Variable extends Struc {
 					Error.syntaxError("'" + value + "' does not exist", lineNumber);
 					return false;
 				}
-				tokens.set(i, extractOperands(tokens.get(i)) + variableID + addr);
+				tokens.set(i, extractOperands(tokens.get(i)) + SyntaxCfg.variableID + addr);
 			}
 		}
 		return true;
@@ -143,9 +144,9 @@ public class Variable extends Struc {
 
 	private boolean validateName(){
 		for (String keyword: concatArrs(new String[][]{
-				keywords,
-				operators,
-				singles}))
+				SyntaxCfg.keywords,
+				SyntaxCfg.operators,
+				SyntaxCfg.singles}))
 
 			if (lhs.equals(keyword)) {
 				Error.namingError("Invalid LHS", lineNumber);

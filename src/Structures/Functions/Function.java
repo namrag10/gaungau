@@ -12,23 +12,23 @@ public class Function extends Struc {
 
 
 	public Condition condition;
-	public Stack<Struc> block = new Stack<Struc>();
+	public Stack < Struc > block = new Stack < Struc > ();
 	private builtinFunctionality functionality;
 	private int startingILine = 0;
 	// private struct type;
 
-	public Function(LineMeta rawStatement){
+	public Function(LineMeta rawStatement) {
 		raw = rawStatement.lineText;
 		lineNumber = rawStatement.lineNumber;
 	}
-	
+
 	@Override
-	public boolean parse(int crntILine){
+	public boolean parse(int crntILine) {
 		startingILine = crntILine;
 		condition = new Condition(extractCondition(), lineNumber);
 		boolean requiresCondition = true;
 
-		switch(getType()){
+		switch (getType()) {
 			case "if":
 				functionality = new ifFunc(startingILine, condition, hasElse);
 				break;
@@ -44,7 +44,7 @@ public class Function extends Struc {
 				functionality = new printFunc(startingILine, condition);
 				break;
 			case "else":
-				requiresCondition = false; 
+				requiresCondition = false;
 				functionality = new elseStatement(startingILine);
 				break;
 			case "NOOPENBRACKET":
@@ -52,27 +52,27 @@ public class Function extends Struc {
 				return false;
 			default:
 				requiresCondition = false;
-				functionality = new CustomFunction(startingILine, condition);
+				functionality = new customFunction(startingILine, condition);
 				System.out.println(raw + " NEW FUNCTION - noted but not implemented");
 				break;
 		}
 
 		// Sort out the condition if needed
-		if(requiresCondition){
-			if(condition.getRaw() == null){
+		if (requiresCondition) {
+			if (condition.getRaw() == null) {
 				Error.syntaxError("No condition found", lineNumber);
 				return false;
 			}
 
-			if(!functionality.generateCondition())
+			if (!functionality.generateCondition())
 				return false;
 		}
 		crntILine += functionality.preInstructionCount();
 
 		// Discover structures in block
 		// Hot recursion going on here
-		for (Struc structure : block) {
-			if(!structure.parse(crntILine))
+		for (Struc structure: block) {
+			if (!structure.parse(crntILine))
 				return false;
 			crntILine += structure.instructionCount();
 		}
@@ -84,11 +84,11 @@ public class Function extends Struc {
 	}
 
 	// Adds a statement to the block
-	public void addStatement(Struc line){
+	public void addStatement(Struc line) {
 		block.add(line);
 	}
 
-	private String extractCondition(){
+	private String extractCondition() {
 		int bracketIndex = raw.indexOf("(");
 		return (bracketIndex > -1) ? raw.substring(bracketIndex) : null;
 	}
@@ -96,20 +96,20 @@ public class Function extends Struc {
 
 	// Sexy polymorphism going on here
 	@Override
-	public ArrayList<String> buildAndGetInstructions(){
-		
-		for (String string : functionality.preBlock) 
+	public ArrayList < String > buildAndGetInstructions() {
+
+		for (String string: functionality.preBlock)
 			instructions.add(string);
 
 
-		for (Struc structure : block)
-			for (String string : structure.buildAndGetInstructions())
+		for (Struc structure: block)
+			for (String string: structure.buildAndGetInstructions())
 				instructions.add(string);
-			
-		
-		for (String string : functionality.postBlock) 
+
+
+		for (String string: functionality.postBlock)
 			instructions.add(string);
-		
+
 		return instructions;
 	}
 }

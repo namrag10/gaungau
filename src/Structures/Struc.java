@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import Syntax.SyntaxCfg;
 
-public class Struc implements SyntaxCfg {
+public class Struc {
     
     public int lineNumber;
     protected String raw;
@@ -32,7 +32,7 @@ public class Struc implements SyntaxCfg {
     }
     
     public boolean isOperator(String term) {
-		for (String symbol: operators)
+		for (String symbol: SyntaxCfg.operators)
 			if (symbol.equals(term)) return true;
 		return false;
 	}
@@ -41,7 +41,7 @@ public class Struc implements SyntaxCfg {
 		int index = 0;
 		String[] crntChars = name.split("");
 		for (String chr: crntChars)
-			for (String vChr: operators)
+			for (String vChr: SyntaxCfg.operators)
 				if (vChr.equals(chr))
 					index++;
 		return name.substring(0, index);
@@ -51,7 +51,7 @@ public class Struc implements SyntaxCfg {
 		int index = 0;
 		String[] crntChars = name.split("");
 		for (String chr: crntChars)
-			for (String vChr: operators)
+			for (String vChr: SyntaxCfg.operators)
 				if (vChr.equals(chr))
 					index++;
 		return name.substring(index);

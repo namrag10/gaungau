@@ -9,14 +9,14 @@ import Structures.*;
 
 public class CodeGen {
 
-	private SyntaxAnalysis codeTree;
+	private String filePath;
 
-	public CodeGen(SyntaxAnalysis codeBase) {
-		codeTree = codeBase;
+	public CodeGen(String outputFile) {
+		filePath = outputFile;
 
 		// Clears the output file
 		try {
-			FileWriter myWriter = new FileWriter("output.asm");
+			FileWriter myWriter = new FileWriter(filePath);
 			myWriter.write("");
 			myWriter.close();
 		} catch (IOException e) {
@@ -25,8 +25,8 @@ public class CodeGen {
 		}
 	}
 
-	public boolean generate() {
-		ArrayList < Struc > code = codeTree.getFullCode();
+	public boolean generate(SyntaxAnalysis syntaxAnalysis) {
+		ArrayList < Struc > code = syntaxAnalysis.getFullCode();
 
 		for (Struc structure: code) {
 			for(String instruction : structure.buildAndGetInstructions()){
@@ -42,7 +42,7 @@ public class CodeGen {
 
 	private boolean append(String instructions) {
 		try {
-			FileWriter myWriter = new FileWriter("output.asm", true);
+			FileWriter myWriter = new FileWriter(filePath, true);
 			myWriter.append(instructions);
 			myWriter.close();
 			return true;

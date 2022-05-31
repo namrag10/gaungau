@@ -1,11 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import ErrorHandle.Error;
-import Structures.Struc;
+import GarbageControl.output;
 import mainProcesses.CodeGen;
+import mainProcesses.LexicalAnalysis;
 import mainProcesses.SyntaxAnalysis;
 
 public class App {
@@ -34,13 +34,14 @@ public class App {
 			return;
 		}
 
-		SyntaxAnalysis syn = new SyntaxAnalysis(txtScript);
+		LexicalAnalysis lex = new LexicalAnalysis(txtScript);
 
-		ArrayList<Struc> yeet = syn.getCommands();
+		SyntaxAnalysis syn = new SyntaxAnalysis(lex);
+		output yeet = syn.view();
 
 		if(!syn.hasError()){
-			CodeGen Gen = new CodeGen(syn);
-			Gen.generate();
+			CodeGen Gen = new CodeGen("output.asm");
+			Gen.generate(syn);
 		}
 
 

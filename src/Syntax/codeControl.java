@@ -1,6 +1,6 @@
 package Syntax;
 
-public class codeControl implements SyntaxCfg{
+public class codeControl {
 
     public static String load(String value){
         return handle("LDA", value);
@@ -70,7 +70,7 @@ public class codeControl implements SyntaxCfg{
 
     private static String handle(String command, String number){
         String ret = "&";
-        if(number.indexOf(variableID) > -1){
+        if(number.indexOf(SyntaxCfg.variableID) > -1){
             ret = "";
             number = number.substring(1);
         }

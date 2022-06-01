@@ -4,22 +4,34 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "Interpreter_896586f3",
+            "args": [
+                "test"
+            ]
+        },
         {
             "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "args": ["test"]
+            "args": [
+                "test"
+            ]
         },
         {
             "type": "java",
             "name": "Launch App",
             "request": "launch",
             "mainClass": "App",
-            //"projectName": "Interpreter_896586f3",
             "projectName": "gaungau_72b3e393",
-            "args": ["test"]
+            "args": [
+                "test"
+            ]
         }
     ]
 }

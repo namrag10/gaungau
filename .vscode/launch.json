@@ -6,7 +6,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch App",
+            "name": "PC",
             "request": "launch",
             "mainClass": "App",
             "projectName": "Interpreter_896586f3",
@@ -25,7 +25,7 @@
         },
         {
             "type": "java",
-            "name": "Launch App",
+            "name": "Laptop",
             "request": "launch",
             "mainClass": "App",
             "projectName": "gaungau_72b3e393",

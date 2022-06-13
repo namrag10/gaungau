@@ -55,14 +55,14 @@ public class SyntaxAnalysis implements main {
 
 
 				// ======= OPEN BLOCK ======== \\
-			} else if(statementText.indexOf("{") > -1){
-				if(fromFunction){
+			} else if (statementText.indexOf("{") > -1) {
+				if (fromFunction) {
 					fromFunction = false;
-				}else{
+				} else {
 					Error.syntaxError("Stray '{'", lineMeta.lineNumber);
 					setError();
 				}
-			
+
 
 				// ======= CLOSE BLOCK ======= \\
 			} else if (statementText.indexOf("}") > -1) { // Identifies a close bracket to end a block
@@ -72,6 +72,9 @@ public class SyntaxAnalysis implements main {
 					Error.syntaxError("Stray '}'", lineMeta.lineNumber);
 					setError();
 				}
+			
+			} else if(FunctionManager.has(statementText)){
+				System.out.println("FUNCTION CALL AT " + lineMeta.lineNumber + " - cannot call at present, but noted here!");
 
 
 				// ======= POSSIBLE FUNCTION ======= \\
@@ -95,33 +98,29 @@ public class SyntaxAnalysis implements main {
 
 				// line has NO keyword in it
 				if (i == SyntaxCfg.keywords.length) { // The for loop condition failed, and no break was triggered (reaches end of condition)
-					int funcIdLoc = statementText.indexOf(SyntaxCfg.functionIdentifier);
-					if (funcIdLoc > -1) {
 
-						for (i = 0; i < SyntaxCfg.callables.length; i++)
-							if(funcWordStartEquals(statementText, SyntaxCfg.callables[i]))
-								break;
 
-						if (i < SyntaxCfg.callables.length || FunctionManager.has(statementText)) {
-							if (openFunctions.size() == 0) {
-								topCommands.add(new Function(lineMeta));								
-							} else {
-								openFuncAddStatement(new Function(lineMeta), fromFunction);
-							}
-						}else{
-							if (openFunctions.size() == 0) {
-								topCommands.add(new Function(lineMeta));
-								openFunctions.push((Function) topCommands.get(topCommands.size() - 1));
-								fromFunction = true;
-								// FunctionManager.newFunction()
-							} else {
-								Error.syntaxError("Cannot create a function within another function", lineMeta.lineNumber);
-								setError();
-								return;
-							}
+
+					// ======= CHECKS FOR BUILT IN FUNCTIONS ======= \\
+					for (i = 0; i < SyntaxCfg.callables.length; i++)
+						if (funcWordStartEquals(statementText, SyntaxCfg.callables[i]))
+							break;
+
+
+					if (i < SyntaxCfg.callables.length) {
+						// ======= IS A BUILT IN ======= \\
+						if (openFunctions.size() == 0) {
+							topCommands.add(new Function(lineMeta));
+						} else {
+							openFuncAddStatement(new Function(lineMeta), fromFunction);
 						}
+
+
+						// ======= POSSIBLE NEW FUNCTION ======= \\
 					} else {
-						lineValid = false;
+						Error.syntaxError("Cannot create or call custom methods yet sorry", lineMeta.lineNumber);
+						setError();
+						return;
 					}
 				}
 			}
@@ -153,17 +152,17 @@ public class SyntaxAnalysis implements main {
 		}
 	}
 
-	
-	private boolean funcWordStartEquals(String raw, String key){
+
+	private boolean funcWordStartEquals(String raw, String key) {
 		int openIndex = raw.indexOf("(");
-		if(openIndex == -1)
+		if (openIndex == -1)
 			return false;
 		return (raw.substring(0, openIndex).equals(key));
 	}
 
-	private void openFuncAddStatement(Struc newStatement, boolean fromFunction){
+	private void openFuncAddStatement(Struc newStatement, boolean fromFunction) {
 		openFunctions.peek().addStatement(newStatement);
-		if(fromFunction)
+		if (fromFunction)
 			openFunctions.pop();
 	}
 

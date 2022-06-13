@@ -3,4 +3,6 @@
 test := 9
 if(test == 9)
     thing := 78
-print(test)
+
+
+print(thing

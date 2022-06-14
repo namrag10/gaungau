@@ -1,8 +1,23 @@
+# yeet
+yeet:= 3   # lala
 
+test:= 5 + yeet
+if(test < 3){
+    num := yeet + 7
+    yeet := 78
+    if(num > 0){
+        num := num - 1
+    }
+    if(num > 0){
+        num := num - 1
+        yeet := 6
+        while(5 == 9){
+            lmao := 50
+        }
+    }
+    if(num > 0){
+        num := num + 1
+    }
+}
 
-test := 989
-if(test == 9)
-    thing := 78
-
-
-print()
+haha := 7

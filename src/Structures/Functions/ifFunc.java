@@ -7,7 +7,7 @@ public class ifFunc extends builtinFunctionality {
 
 
     public ifFunc(int IOpen, Condition condition, boolean hasElse){
-        super(IOpen, condition, hasElse);
+        super(IOpen, condition, -1, hasElse);
     }
 
     @Override

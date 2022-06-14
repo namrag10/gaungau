@@ -4,7 +4,7 @@ import Syntax.codeControl;
 
 public class elseStatement extends builtinFunctionality {
     public elseStatement(int openAt){
-        super(openAt, null);
+        super(openAt, null, -1);
     }
 
     @Override

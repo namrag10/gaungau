@@ -1,8 +1,8 @@
 
 
-test := 9
+test := 989
 if(test == 9)
     thing := 78
 
 
-print(thing
+print(

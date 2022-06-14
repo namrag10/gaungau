@@ -33,7 +33,6 @@ public class SyntaxAnalysis implements main {
 			String statementText = lineMeta.lineText;
 
 
-			boolean lineValid = true;
 
 			// ======= ELSE STATEMENT ======= \\
 			if (funcWordStartEquals(statementText, "else")) {
@@ -78,7 +77,7 @@ public class SyntaxAnalysis implements main {
 
 
 				// ======= POSSIBLE FUNCTION ======= \\
-			} else { // Whatever is left is checked against keywords and a 'function' is created for it
+			} else if(statementText.indexOf("(") > -1){ // Whatever is left is checked against keywords and a 'function' is created for it
 
 				// ======= CHECKS FOR KEYWORDS ======= \\
 				int i = 0;
@@ -123,13 +122,11 @@ public class SyntaxAnalysis implements main {
 						return;
 					}
 				}
-			}
-
-			// ===== Catch an Error for this line ===== \\
-			if (!lineValid) {
+			}else{
 				Error.syntaxError("'" + statementText + "'", lineMeta.lineNumber);
 				setError();
 			}
+
 		}
 
 		// ===== Ensures all functions have a close bracket ===== \\
@@ -157,6 +154,7 @@ public class SyntaxAnalysis implements main {
 		int openIndex = raw.indexOf("(");
 		if (openIndex == -1)
 			return false;
+		
 		return (raw.substring(0, openIndex).equals(key));
 	}
 

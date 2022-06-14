@@ -24,10 +24,6 @@ public class Condition extends Struc {
     public boolean parse(int ILine) {
         this.ILine = ILine;
         
-        if (raw.indexOf(")") == -1) {
-            Error.syntaxError("No close bracket on condition", lineNumber);
-            return false;
-        }
         condition = raw.substring(1, raw.indexOf(")"));
 
         for (String bracket : SyntaxCfg.braces) {

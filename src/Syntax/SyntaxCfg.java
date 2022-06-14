@@ -13,7 +13,6 @@ public class SyntaxCfg {
 	public static String[] operators = new String[]{"+", "-"}; // Coinsidently these are the only things allowed on RHS of variable which isn't a condition
 	
 
-	public static String functionIdentifier = "()";
     public static String variableOperand = ":="; // Variable set syntax
 	public static String variableID = "&"; // To show where a variable is present, and thus the pointer should be updated
 

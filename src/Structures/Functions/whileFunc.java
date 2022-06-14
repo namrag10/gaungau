@@ -6,7 +6,7 @@ import Syntax.codeControl;
 public class whileFunc extends builtinFunctionality {
 
     public whileFunc(int IOpen, Condition condition) {
-        super(IOpen, condition);
+        super(IOpen, condition, -1);
     }
 
     @Override

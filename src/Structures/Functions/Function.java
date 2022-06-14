@@ -28,6 +28,12 @@ public class Function extends Struc {
 		condition = new Condition(extractCondition(), lineNumber);
 		boolean requiresCondition = true;
 
+		if(raw.indexOf(")") == -1){
+			Error.syntaxError("No close bracket", lineNumber);
+			return false;
+		}
+
+
 		switch (getType()) {
 			case "if":
 				functionality = new ifFunc(startingILine, condition, hasElse);
@@ -41,7 +47,7 @@ public class Function extends Struc {
 				break;
 			case "print":
 				requiresCondition = false;
-				functionality = new printFunc(startingILine, condition);
+				functionality = new printFunc(startingILine, condition, lineNumber);				
 				break;
 			case "else":
 				requiresCondition = false;
@@ -52,11 +58,14 @@ public class Function extends Struc {
 				return false;
 			default:
 				requiresCondition = false;
-				functionality = new customFunction(startingILine, condition);
+				functionality = new customFunction(startingILine, condition, lineNumber);
 				System.out.println(raw + " NEW FUNCTION - noted but not implemented");
 				break;
 		}
 
+		if(!functionality.validUse)
+			return false;
+		
 		// Sort out the condition if needed
 		if (requiresCondition) {
 			if (condition.getRaw() == null) {

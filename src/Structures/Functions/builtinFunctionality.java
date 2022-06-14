@@ -2,6 +2,7 @@ package Structures.Functions;
 
 import java.util.ArrayList;
 
+
 import Structures.Meta.Condition;
 
 public class builtinFunctionality {
@@ -10,16 +11,17 @@ public class builtinFunctionality {
     public Condition funcCondition;
     protected boolean closed = false;
     protected boolean elseAttached = false;
+    public boolean validUse = true;
 
     protected int IStarting;
     protected int closingILine;
 
-    public builtinFunctionality(int IOpen, Condition condition, boolean hasElse){
-        this(IOpen, condition);
+    public builtinFunctionality(int IOpen, Condition condition, int Line, boolean hasElse){
+        this(IOpen, condition, Line);
         elseAttached = hasElse;
     }
 
-    public builtinFunctionality(int IOpen, Condition condition){
+    public builtinFunctionality(int IOpen, Condition condition, int Line){
         IStarting = IOpen;
         funcCondition = condition;
     }

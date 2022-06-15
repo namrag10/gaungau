@@ -65,6 +65,10 @@ public class codeControl {
         return "OUT\n";
     }
 
+    public static String custom(String cmd){
+        return cmd + "\n";
+    }
+
 
 
 

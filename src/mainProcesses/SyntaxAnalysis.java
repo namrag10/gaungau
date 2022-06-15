@@ -21,11 +21,11 @@ public class SyntaxAnalysis implements main {
 	private Stack < Function > openFunctions = new Stack < Function > ();
 
 	private boolean errors = false;
-
+	private boolean fromFunction = false;
+	private Function lastClosed = null;
 
 	public SyntaxAnalysis(LexicalAnalysis lex) {
 		Queue < LineMeta > statements = lex.getStatements(); // Removes comments
-		boolean fromFunction = false;
 
 		while (statements.size() > 0) { // Loops through each statement (;)
 
@@ -36,21 +36,23 @@ public class SyntaxAnalysis implements main {
 
 			// ======= ELSE STATEMENT ======= \\
 			if (funcWordStartEquals(statementText, "else")) {
-				if (topCommands.size() > 0 && !topCommands.get(topCommands.size() - 1).getType().equals("if")) {
+				if (lastClosed != null && lastClosed.getType().equals("if")) {
+				
+					lastClosed.setElse();
+						
+				} else {
 					Error.syntaxError("Invalid placment of else statement", lineMeta.lineNumber);
 					setError();
-					return;
-				} else
-					topCommands.get(topCommands.size() - 1).setElse();
+				}
 			}
 
 
 			// ======= VARIABLE ======= \\
 			if (statementText.indexOf(SyntaxCfg.variableOperand) > -1) { // Identifies a variable based on the presence of ':='
 				if (openFunctions.size() > 0) {
-					openFuncAddStatement(new Variable(lineMeta), fromFunction);
+					openFuncAddStatement(new Variable(lineMeta));
 				} else
-					topCommands.add(new Variable(lineMeta));
+					addTopCommand(new Variable(lineMeta));
 
 
 				// ======= OPEN BLOCK ======== \\
@@ -66,29 +68,29 @@ public class SyntaxAnalysis implements main {
 				// ======= CLOSE BLOCK ======= \\
 			} else if (statementText.indexOf("}") > -1) { // Identifies a close bracket to end a block
 				if (openFunctions.size() > 0) {
-					openFunctions.pop();
+					lastClosed = openFunctions.pop();
 				} else {
 					Error.syntaxError("Stray '}'", lineMeta.lineNumber);
 					setError();
 				}
-			
-			} else if(FunctionManager.has(statementText)){
+
+			} else if (FunctionManager.has(statementText)) {
 				System.out.println("FUNCTION CALL AT " + lineMeta.lineNumber + " - cannot call at present, but noted here!");
 
 
 				// ======= POSSIBLE FUNCTION ======= \\
-			} else if(statementText.indexOf("(") > -1){ // Whatever is left is checked against keywords and a 'function' is created for it
+			} else { // Whatever is left is checked against keywords and a 'function' is created for it
 
 				// ======= CHECKS FOR KEYWORDS ======= \\
 				int i = 0;
 				for (i = 0; i < SyntaxCfg.keywords.length; i++) // Checks against keywords
 					if (funcWordStartEquals(statementText, SyntaxCfg.keywords[i])) {
 						if (openFunctions.size() == 0) {
-							topCommands.add(new Function(lineMeta));
+							addTopCommand(new Function(lineMeta));
 							openFunctions.push((Function) topCommands.get(topCommands.size() - 1));
 						} else {
 							Function newFunc = new Function(lineMeta);
-							openFuncAddStatement(newFunc, fromFunction);
+							openFuncAddStatement(newFunc);
 							openFunctions.push((Function) newFunc);
 						}
 						fromFunction = true;
@@ -98,35 +100,35 @@ public class SyntaxAnalysis implements main {
 				// line has NO keyword in it
 				if (i == SyntaxCfg.keywords.length) { // The for loop condition failed, and no break was triggered (reaches end of condition)
 
+					if (statementText.indexOf("(") > -1) {
+						// ======= CHECKS FOR BUILT IN FUNCTIONS ======= \\
+						for (i = 0; i < SyntaxCfg.callables.length; i++)
+							if (funcWordStartEquals(statementText, SyntaxCfg.callables[i]))
+								break;
 
 
-					// ======= CHECKS FOR BUILT IN FUNCTIONS ======= \\
-					for (i = 0; i < SyntaxCfg.callables.length; i++)
-						if (funcWordStartEquals(statementText, SyntaxCfg.callables[i]))
-							break;
+						if (i < SyntaxCfg.callables.length) {
+							// ======= IS A BUILT IN ======= \\
+							if (openFunctions.size() == 0) {
+								addTopCommand(new Function(lineMeta));
+							} else {
+								openFuncAddStatement(new Function(lineMeta));
+							}
 
 
-					if (i < SyntaxCfg.callables.length) {
-						// ======= IS A BUILT IN ======= \\
-						if (openFunctions.size() == 0) {
-							topCommands.add(new Function(lineMeta));
+							// ======= POSSIBLE NEW FUNCTION ======= \\
 						} else {
-							openFuncAddStatement(new Function(lineMeta), fromFunction);
+							Error.syntaxError("Cannot create or call custom methods yet sorry", lineMeta.lineNumber);
+							setError();
 						}
-
-
-						// ======= POSSIBLE NEW FUNCTION ======= \\
 					} else {
-						Error.syntaxError("Cannot create or call custom methods yet sorry", lineMeta.lineNumber);
+
+						Error.syntaxError("'" + statementText + "'", lineMeta.lineNumber);
 						setError();
-						return;
+
 					}
 				}
-			}else{
-				Error.syntaxError("'" + statementText + "'", lineMeta.lineNumber);
-				setError();
 			}
-
 		}
 
 		// ===== Ensures all functions have a close bracket ===== \\
@@ -153,15 +155,23 @@ public class SyntaxAnalysis implements main {
 	private boolean funcWordStartEquals(String raw, String key) {
 		int openIndex = raw.indexOf("(");
 		if (openIndex == -1)
-			return false;
-		
+			return (raw.equals(key));;
+
 		return (raw.substring(0, openIndex).equals(key));
 	}
 
-	private void openFuncAddStatement(Struc newStatement, boolean fromFunction) {
+	private void openFuncAddStatement(Struc newStatement) {
 		openFunctions.peek().addStatement(newStatement);
-		if (fromFunction)
-			openFunctions.pop();
+		if (fromFunction) {
+			lastClosed = openFunctions.pop();
+			fromFunction = false;
+		}
+	}
+
+	private void addTopCommand(Struc command){
+		topCommands.add(command);
+		lastClosed = null;
+
 	}
 
 	public ArrayList < Struc > getFullCode() {

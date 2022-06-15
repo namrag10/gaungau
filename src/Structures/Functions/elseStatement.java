@@ -12,4 +12,11 @@ public class elseStatement extends builtinFunctionality {
         super.closeHandle(IClose);
         preBlock.add(codeControl.unconditionalBranch(IClose));
     }
+
+    @Override
+    public int preInstructionCount(){
+        if(closed)
+            return preBlock.size();
+        return preBlock.size() +1;
+    }
 }

@@ -18,14 +18,11 @@ public class printFunc extends builtinFunctionality {
 
 		int address = MemoryManager.has(parameter);
 
-		if(parameter.equals("")){
-			
-		}else if(address > -1){
+		if(!parameter.equals("") && address > -1){
 			preBlock.add(codeControl.load(SyntaxCfg.variableID + Integer.toString(address)));
-		}else{
+		}else
 			Error.syntaxError("Unknown variable in print function", Line);
-		}
-
+		
 		preBlock.add(codeControl.print());
 		
 	}

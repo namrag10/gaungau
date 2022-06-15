@@ -59,10 +59,10 @@ public class Struc {
 
 	public String getType(){
 		int openIndex = raw.indexOf("(");
-		if(openIndex == -1) return "NOOPENBRACKET";
+
 		if(openIndex > -1)
         	return raw.substring(0, raw.indexOf("("));
-		return raw.substring(0, raw.indexOf("{"));
+		return raw;
     }
 
 	public void setElse(){

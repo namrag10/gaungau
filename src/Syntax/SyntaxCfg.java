@@ -3,7 +3,7 @@ package Syntax;
 public class SyntaxCfg {
     
     public static String[] keywords = new String[]{"if", "while", "else"};
-	public static String[] callables = new String[]{"print", "exit"};
+	public static String[] callables = new String[]{"print", "exit", "raw"};
     public static String[] comparatorKeys = new String[]{"&&", "||"};
 	
 	public static String[] comparators = new String[]{"==", "!=", "<=", ">=", "<", ">"};

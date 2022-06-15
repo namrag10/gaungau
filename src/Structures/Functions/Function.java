@@ -28,12 +28,8 @@ public class Function extends Struc {
 		condition = new Condition(extractCondition(), lineNumber);
 		boolean requiresCondition = true;
 
-		if(raw.indexOf(")") == -1){
-			Error.syntaxError("No close bracket", lineNumber);
-			return false;
-		}
 
-
+// open bracket problem
 		switch (getType()) {
 			case "if":
 				functionality = new ifFunc(startingILine, condition, hasElse);
@@ -49,13 +45,14 @@ public class Function extends Struc {
 				requiresCondition = false;
 				functionality = new printFunc(startingILine, condition, lineNumber);				
 				break;
+			case "raw":
+				requiresCondition = false;
+				functionality = new rawStatement(startingILine, condition, lineNumber);				
+				break;
 			case "else":
 				requiresCondition = false;
 				functionality = new elseStatement(startingILine);
 				break;
-			case "NOOPENBRACKET":
-				Error.syntaxError("No open bracket on condition", lineNumber);
-				return false;
 			default:
 				requiresCondition = false;
 				functionality = new customFunction(startingILine, condition, lineNumber);
@@ -68,6 +65,11 @@ public class Function extends Struc {
 		
 		// Sort out the condition if needed
 		if (requiresCondition) {
+			if(raw.indexOf(")") == -1){
+				Error.syntaxError("No close bracket", lineNumber);
+				return false;
+			}
+
 			if (condition.getRaw() == null) {
 				Error.syntaxError("No condition found", lineNumber);
 				return false;

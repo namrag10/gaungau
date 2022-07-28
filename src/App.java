@@ -39,6 +39,7 @@ public class App {
 		if(!syn.hasError()){
 			CodeGen Gen = new CodeGen("output.asm");
 			Gen.generate(syn);
+			System.out.println("Compilation Successful!");
 		}
 
 

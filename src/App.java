@@ -7,11 +7,8 @@ import mainProcesses.*;
 
 public class App {
 	public static void main(String[] args) throws Exception {
-		if(args.length > 1){
-			Error.customError("Interpreter requires ONLY the path of 1 script, not the ");
-			return;
-		}else if(args.length < 1){
-			Error.customError("Interpreter requires the path of ONE script");
+		if(args.length != 2){
+			Error.customError("Interpreter requires the path of a GNG script, and the output file");
 			return;
 		}
 
@@ -20,14 +17,14 @@ public class App {
 
 
 		try {
-			File myObj = new File(args[0] + ".gng");
+			File myObj = new File(args[0]);
 			Scanner myReader = new Scanner(myObj);
 			while (myReader.hasNextLine())
 				txtScript = txtScript + myReader.nextLine() + "\n";
 
 			myReader.close();
 		} catch (FileNotFoundException e) {
-			Error.customError("Script was not found at path '" + args[0] + ".gng'!");
+			Error.customError("Script was not found at path '" + args[0] + "'!");
 			return;
 		}
 
@@ -37,7 +34,7 @@ public class App {
 		
 
 		if(!syn.hasError()){
-			CodeGen Gen = new CodeGen("output.asm");
+			CodeGen Gen = new CodeGen(args[1]);
 			Gen.generate(syn);
 			System.out.println("Compilation Successful!");
 		}

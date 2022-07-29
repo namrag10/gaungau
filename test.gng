@@ -1,9 +1,3 @@
+x := 6
 
-x := 0
-y := 1
-while(1 == 1){
-    print(y)
-    t = y
-    y = y + x
-    x = t
-}
+call()

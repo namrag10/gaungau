@@ -11,7 +11,8 @@
             "mainClass": "App",
             "projectName": "Interpreter_896586f3",
             "args": [
-                "test"
+                "test",
+                "out"
             ]
         },
         {
